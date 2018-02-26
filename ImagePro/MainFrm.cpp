@@ -6,7 +6,7 @@
 #include "ImagePro.h"
 
 #include "MainFrm.h"
-
+/////
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -74,6 +74,7 @@ void CMainFrame::AssertValid() const
 void CMainFrame::Dump(CDumpContext& dc) const
 {
 	CFrameWnd::Dump(dc);
+	int a = 0;
 }
 #endif //_DEBUG
 

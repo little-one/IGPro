@@ -16,13 +16,27 @@
 #define new DEBUG_NEW
 #endif
 
+#include <setjmp.h>
+
+extern "C"
+{
+#include "jpeglib.h"
+}
+#pragma comment(lib,"libjpeg.lib")
 
 // CImageProView
 
 IMPLEMENT_DYNCREATE(CImageProView, CFormView)
 
 BEGIN_MESSAGE_MAP(CImageProView, CFormView)
+	ON_BN_CLICKED(IDC_BUTTON1, &CImageProView::OnBnClickedButton1)
 END_MESSAGE_MAP()
+
+struct my_error_mgr {
+	struct jpeg_error_mgr pub;	/* "public" fields */
+
+	jmp_buf setjmp_buffer;	/* for return to caller */
+};
 
 // CImageProView 构造/析构
 
@@ -81,3 +95,28 @@ CImageProDoc* CImageProView::GetDocument() const // 非调试版本是内联的
 
 
 // CImageProView 消息处理程序
+
+void CImageProView::OnBnClickedButton1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	struct jpeg_decompress_struct cinfo;
+	struct my_error_mgr jerr;
+	FILE* infile;
+	JSAMPARRAY buffer;
+	int row_stride;
+	if ((fopen_s(&infile,"F:\\test\\t1.jpg", "rb")) == NULL)
+	{
+		return;
+	}
+	cinfo.err = jpeg_std_error(&jerr.pub);
+	jpeg_create_decompress(&cinfo);
+	jpeg_stdio_src(&cinfo, infile);
+	(void)jpeg_read_header(&cinfo, TRUE);
+	(void)jpeg_start_decompress(&cinfo);
+	while (cinfo.output_scanline < cinfo.output_height)
+	{
+		(void)jpeg_read_scanlines(&cinfo, buffer, 1);
+	}
+	(void)jpeg_finish_decompress(&cinfo);
+	////
+}
