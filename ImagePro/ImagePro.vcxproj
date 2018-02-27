@@ -120,6 +120,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>libjpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>F:\visual\ImagePro\ImagePro;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -174,6 +176,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>F:\visual\ImagePro\ImagePro;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libjpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -217,11 +221,15 @@
     <ResourceCompile Include="ImagePro.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="libjpeg.dll" />
     <None Include="res\ImagePro.rc2" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\ImagePro.ico" />
     <Image Include="res\ImageProDoc.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libjpeg.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

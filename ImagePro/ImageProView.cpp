@@ -18,12 +18,14 @@
 
 #include <setjmp.h>
 
-extern "C"
-{
-#include "jpeglib.h"
-}
-#pragma comment(lib,"libjpeg.lib")
 
+
+extern "C" 
+{ 
+#include "jpeglib.h" 
+}
+
+//#pragma comment(lib,"./libjpeg.lib")
 // CImageProView
 
 IMPLEMENT_DYNCREATE(CImageProView, CFormView)
@@ -99,23 +101,62 @@ CImageProDoc* CImageProView::GetDocument() const // 非调试版本是内联的
 void CImageProView::OnBnClickedButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	//struct jpeg_decompress_struct cinfo;
+	//struct my_error_mgr jerr;
+	//FILE* infile;
+	//JSAMPARRAY buffer;
+	//int row_stride;
+	//if ((fopen_s(&infile,"F:\\test\\t1.jpg", "rb")) == NULL)
+	//{
+	//	return;
+	//}
+	struct jpeg_compress_struct coutfo;
 	struct jpeg_decompress_struct cinfo;
-	struct my_error_mgr jerr;
-	FILE* infile;
-	JSAMPARRAY buffer;
-	int row_stride;
-	if ((fopen_s(&infile,"F:\\test\\t1.jpg", "rb")) == NULL)
-	{
-		return;
-	}
-	cinfo.err = jpeg_std_error(&jerr.pub);
+	struct jpeg_error_mgr injerr;
+	struct jpeg_error_mgr outjerr;
+	cinfo.err = jpeg_std_error(&injerr);
+	coutfo.err = jpeg_std_error(&outjerr);
+	jpeg_create_compress(&coutfo);
 	jpeg_create_decompress(&cinfo);
+	FILE* infile;
+	FILE* outfile;
+	fopen_s(&infile, "F:\\test\\t1.jpg", "rb");
+	fopen_s(&outfile, "F:\\test\\t2.jpg", "wb");
 	jpeg_stdio_src(&cinfo, infile);
-	(void)jpeg_read_header(&cinfo, TRUE);
-	(void)jpeg_start_decompress(&cinfo);
+	jpeg_read_header(&cinfo, TRUE);
+	jpeg_stdio_dest(&coutfo, outfile);
+	coutfo.image_width = cinfo.image_width;
+	coutfo.image_height = cinfo.image_height;
+	coutfo.input_components = cinfo.num_components;
+	coutfo.in_color_space = cinfo.out_color_space;
+	jpeg_set_defaults(&coutfo);
+
+	jpeg_start_decompress(&cinfo);
+	jpeg_start_compress(&coutfo, TRUE);
+
+	int row_stride = cinfo.output_width * cinfo.output_components;
+	JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr)&cinfo, JPOOL_IMAGE, row_stride, 1);
+	JSAMPROW row_pointer[1];
+	int count = 0;
 	while (cinfo.output_scanline < cinfo.output_height)
 	{
-		(void)jpeg_read_scanlines(&cinfo, buffer, 1);
+		jpeg_read_scanlines(&cinfo, buffer, 1);
+		row_pointer[0] = buffer[0];
+		if (count < 50)
+			for (int i = 0; i < row_stride; i++)
+			{
+				buffer[0][i] = 255;
+			}
+		jpeg_write_scanlines(&coutfo, row_pointer, 1);
+		count++;
 	}
-	(void)jpeg_finish_decompress(&cinfo);
+
+	jpeg_finish_decompress(&cinfo);
+	jpeg_finish_compress(&coutfo);
+
+	jpeg_destroy_decompress(&cinfo);
+	jpeg_destroy_compress(&coutfo);
+
+	fclose(infile);
+	fclose(outfile);
 }

@@ -75,6 +75,7 @@
     <None Include="res\ImagePro.rc2">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="libjpeg.dll" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\ImageProDoc.ico">
@@ -83,5 +84,8 @@
     <Image Include="res\ImagePro.ico">
       <Filter>资源文件</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libjpeg.lib" />
   </ItemGroup>
 </Project>
