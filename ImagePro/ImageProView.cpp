@@ -118,5 +118,4 @@ void CImageProView::OnBnClickedButton1()
 		(void)jpeg_read_scanlines(&cinfo, buffer, 1);
 	}
 	(void)jpeg_finish_decompress(&cinfo);
-	////
 }
