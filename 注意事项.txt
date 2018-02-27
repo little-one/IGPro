@@ -1,0 +1,1 @@
+如果出现 xxx.VC.opendb未找到导致git无法提交更改，则打开.git/info/exclude，在行末加入 xxx.VC.opendb保存即可
