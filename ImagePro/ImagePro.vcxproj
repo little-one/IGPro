@@ -194,21 +194,30 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BinaryFileSolver.h" />
+    <ClInclude Include="Encrypt_Decrpty.h" />
+    <ClInclude Include="FolderMonitor.h" />
     <ClInclude Include="ImagePro.h" />
     <ClInclude Include="ImageProDoc.h" />
     <ClInclude Include="ImageProView.h" />
     <ClInclude Include="jconfig.h" />
     <ClInclude Include="jmorecfg.h" />
+    <ClInclude Include="JpegFileOp.h" />
     <ClInclude Include="jpeglib.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StreamConvert.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BinaryFileSolver.cpp" />
+    <ClCompile Include="Encrypt_Decrpty.cpp" />
+    <ClCompile Include="FolderMonitor.cpp" />
     <ClCompile Include="ImagePro.cpp" />
     <ClCompile Include="ImageProDoc.cpp" />
     <ClCompile Include="ImageProView.cpp" />
+    <ClCompile Include="JpegFileOp.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -216,6 +225,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StreamConvert.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ImagePro.rc" />

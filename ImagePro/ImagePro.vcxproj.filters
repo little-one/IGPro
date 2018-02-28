@@ -48,6 +48,21 @@
     <ClInclude Include="jpeglib.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Encrypt_Decrpty.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FolderMonitor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JpegFileOp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamConvert.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryFileSolver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImagePro.cpp">
@@ -63,6 +78,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ImageProView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FolderMonitor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JpegFileOp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamConvert.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryFileSolver.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Encrypt_Decrpty.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
