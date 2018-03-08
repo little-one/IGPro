@@ -1133,6 +1133,7 @@ EXTERN(boolean) jpeg_resync_to_restart JPP((j_decompress_ptr cinfo,
 
 #ifdef INCOMPLETE_TYPES_BROKEN
 #ifndef JPEG_INTERNALS		/* will be defined in jpegint.h */
+
 struct jvirt_sarray_control { long dummy; };
 struct jvirt_barray_control { long dummy; };
 struct jpeg_comp_master { long dummy; };
