@@ -155,7 +155,7 @@ void CImageProView::OnBnClickedButton1()
 			buffer = (cinfo.mem->access_virt_barray)((j_common_ptr)&cinfo, coeff_arrays[ci], 0, (JDIMENSION)1, FALSE);
 			for (int bx = 0; bx < compptr->width_in_blocks; bx++)
 			{
-				blockptr = buffer[0][bx];
+				blockptr = buffer[by][bx];
 				for (int bi = 0; bi < 64; bi++)
 				{
 					blockptr[bi] = 3;
@@ -247,7 +247,7 @@ void CImageProView::OnBnClickedButton2()
 			buffer = (cinfo.mem->access_virt_barray)((j_common_ptr)&cinfo, coeff_arrays[ci], 0, (JDIMENSION)1, FALSE);
 			for (int bx = 0; bx < compptr->width_in_blocks; bx++)
 			{
-				blockptr = buffer[0][bx];
+				blockptr = buffer[by][bx];
 				for (int bi = 0; bi < 64; bi++)
 				{
 					//fputc(blockptr+bi, outPut);
