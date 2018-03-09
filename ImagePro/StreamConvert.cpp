@@ -168,7 +168,7 @@ StreamConvert::StreamConvert(int N)
 	this->BinaryBit = temp.first;
 	this->N_DecimalBit = temp.second;
 }
-void StreamConvert::InitializeBitMap()
+inline void StreamConvert::InitializeBitMap()
 {
 	/*****************************************/
 	/*		n		二进制		N进制		 */

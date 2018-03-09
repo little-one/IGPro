@@ -16,7 +16,7 @@ private:
 	int N_DecimalBit = -1;		//每组由二进制转过来的N进制数的位数
 	map<int, pair<int, int> > BitRepresentationMap;				//进制转换过程中位数的对应关系, map的索引对应的数字代表是二进制与N进制的互转，键值的意义是pair.first位的二进制数转换成pair.second位的N进制
 private:
-	void InitializeBitMap();
+	inline void InitializeBitMap();
 	pair<int, int> GetBitRepresentation(int N);		//获取进制转换时相应的位数
 public:
 	int byteStreamToBinaryString(uint8_t byteBuf[], int byteLen, char charBuf[], int charLen, int type);

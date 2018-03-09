@@ -20,11 +20,10 @@ using namespace std;
 #endif
 
 #include <setjmp.h>
-
-
-
-
-
+#include "BinaryFileSolver.h"
+#include "Encrypt_Decrpty.h"
+#include "FolderMonitor.h"
+#include "StreamConvert.h"
 
 extern "C" 
 { 
@@ -39,6 +38,7 @@ IMPLEMENT_DYNCREATE(CImageProView, CFormView)
 BEGIN_MESSAGE_MAP(CImageProView, CFormView)
 	ON_BN_CLICKED(IDC_BUTTON1, &CImageProView::OnBnClickedButton1)
 	ON_BN_CLICKED(IDC_BUTTON2, &CImageProView::OnBnClickedButton2)
+	ON_BN_CLICKED(IDC_BUTTON3, &CImageProView::OnBnClickedButton3)
 END_MESSAGE_MAP()
 
 struct my_error_mgr {
@@ -219,8 +219,7 @@ void CImageProView::OnBnClickedButton1()
 void CImageProView::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
-
-	FILE* outPut;
+	/*FILE* outPut;
 	fopen_s(&outPut, "F:\\test\\myout.txt", "wb");
 
 	struct jpeg_decompress_struct cinfo;
@@ -264,5 +263,220 @@ void CImageProView::OnBnClickedButton2()
 	jpeg_finish_decompress(&cinfo);
 	jpeg_destroy_decompress(&cinfo);
 	fclose(infile);
-	fclose(outPut);
+	fclose(outPut);*/
+	BinaryFileSolver fSolver;
+	fSolver.ClearBeforeRead();
+	fSolver.setInFilePath("F:\\test\\SchoolBadge.jpg");
+	if (fSolver.LoadFile() != 0)
+		return;
+	uint8_t* FileContent = fSolver.GetBinaryFileContent();
+	int FileByteCount = fSolver.GetInFileByteCount();
+	int BitCount = FileByteCount * 8;
+	char* BitStream = new char[BitCount];
+	StreamConvert StrmCnv;
+	StrmCnv.byteStreamToBinaryString(FileContent, FileByteCount, BitStream, BitCount, 0);
+	delete[] FileContent;
+
+	jpeg_decompress_struct inputInfo;
+	jpeg_compress_struct outputInfo;
+
+	jpeg_error_mgr injerr;
+	jpeg_error_mgr outjerr;
+
+	inputInfo.err = jpeg_std_error(&injerr);
+	outputInfo.err = jpeg_std_error(&outjerr);
+
+	jpeg_create_decompress(&inputInfo);
+	jpeg_create_compress(&outputInfo);
+
+	FILE* inFile;
+	FILE* outFile;
+	fopen_s(&inFile, "F:\\test\\t1.jpg", "rb");
+	fopen_s(&outFile, "F:\\test\\t5.jpg", "wb");
+	
+	jpeg_stdio_src(&inputInfo, inFile);
+	jpeg_stdio_dest(&outputInfo, outFile);
+	
+	jpeg_read_header(&inputInfo, TRUE);
+
+	outputInfo.image_width = inputInfo.image_width;
+	outputInfo.image_height = inputInfo.image_height;
+	outputInfo.input_components = inputInfo.num_components;
+	outputInfo.in_color_space = inputInfo.out_color_space;
+	jpeg_set_defaults(&outputInfo);
+
+	jvirt_barray_ptr* coeff_arrays;
+	coeff_arrays = jpeg_read_coefficients(&inputInfo);
+
+	int HideFileCounter = 0;
+
+	for (int ci = 0; ci < 3; ci++)
+	{
+		JBLOCKARRAY buffer;
+		JCOEFPTR blockptr;
+		jpeg_component_info* compptr;
+		compptr = inputInfo.comp_info + ci;
+		for (int by = 0; by < compptr->height_in_blocks; by++)
+		{
+			buffer = (inputInfo.mem->access_virt_barray)((j_common_ptr)&inputInfo, coeff_arrays[ci], 0, (JDIMENSION)1, FALSE);
+			for (int bx = 0; bx < compptr->width_in_blocks; bx++)
+			{
+				blockptr = buffer[by][bx];
+				for (int bi = 0; bi < 64; bi++)
+				{
+					//blockptr[bi] = 3;
+					if (HideFileCounter == BitCount)
+						break;
+					if (blockptr[bi] == 0)
+						continue;
+
+					switch (BitStream[HideFileCounter])
+					{
+					case '0':
+						if (blockptr[bi] == 1)
+							blockptr[bi] += 1;
+						else
+						{
+							if (blockptr[bi] % 2 == 1)
+								blockptr[bi] -= 1;
+						}
+						break;
+					case '1':
+						if (blockptr[bi] % 2 == 0)
+							blockptr[bi] -= 1;
+						break;
+					default:
+						break;
+					}
+					HideFileCounter++;
+
+				}
+				if (HideFileCounter == BitCount)
+					break;
+			}
+			if (HideFileCounter == BitCount)
+				break;
+		}
+		if (HideFileCounter == BitCount)
+			break;
+	}
+
+	jpeg_copy_critical_parameters(&inputInfo, &outputInfo);
+	jpeg_write_coefficients(&outputInfo, coeff_arrays);
+
+	jpeg_finish_compress(&outputInfo);
+	jpeg_finish_decompress(&inputInfo);
+	jpeg_destroy_compress(&outputInfo);
+	jpeg_destroy_decompress(&inputInfo);
+
+
+	fclose(inFile);
+	fclose(outFile);
+
+}
+
+
+void CImageProView::OnBnClickedButton3()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	jpeg_decompress_struct inputInfo;
+	jpeg_compress_struct outputInfo;
+
+	jpeg_error_mgr injerr;
+	jpeg_error_mgr outjerr;
+
+	inputInfo.err = jpeg_std_error(&injerr);
+	outputInfo.err = jpeg_std_error(&outjerr);
+
+	jpeg_create_decompress(&inputInfo);
+	jpeg_create_compress(&outputInfo);
+
+	FILE* inputFile;
+	FILE* outputFile;
+
+	fopen_s(&inputFile, "F:\\test\\t5.jpg", "rb");
+	fopen_s(&outputFile, "F:\\test\\t6.jpg", "wb");
+
+	jpeg_stdio_src(&inputInfo, inputFile);
+	jpeg_stdio_dest(&outputInfo, outputFile);
+
+	jpeg_read_header(&inputInfo, TRUE);
+
+	outputInfo.image_width = inputInfo.image_width;
+	outputInfo.image_height = inputInfo.image_height;
+	outputInfo.input_components = inputInfo.num_components;
+	outputInfo.in_color_space = inputInfo.out_color_space;
+	jpeg_set_defaults(&outputInfo);
+
+	jvirt_barray_ptr* coeff_arrays;
+	coeff_arrays = jpeg_read_coefficients(&inputInfo);
+
+	char* HideBitStream = new char[97480];
+	int HideBitCountThreshold = 97480;
+	int HideFileCounter = 0;
+
+	for (int ci = 0; ci < 3; ci++)
+	{
+		JBLOCKARRAY buffer;
+		JCOEFPTR blockptr;
+		jpeg_component_info* compptr;
+		compptr = inputInfo.comp_info + ci;
+		for (int by = 0; by < compptr->height_in_blocks; by++)
+		{
+			buffer = (inputInfo.mem->access_virt_barray)((j_common_ptr)&inputInfo, coeff_arrays[ci], 0, (JDIMENSION)1, FALSE);
+			for (int bx = 0; bx < compptr->width_in_blocks; bx++)
+			{
+				blockptr = buffer[by][bx];
+				for (int bi = 0; bi < 64; bi++)
+				{
+					//blockptr[bi] = 3;
+					if (HideFileCounter == HideBitCountThreshold)
+						break;
+					if (blockptr[bi] == 0)
+						continue;
+
+					short bitFlg = blockptr[bi] % 2;
+					switch (bitFlg)
+					{
+					case 0:
+						HideBitStream[HideFileCounter] = '0';
+						break;
+					case 1:
+						HideBitStream[HideFileCounter] = '1';
+						break;
+					default:
+						break;
+					}
+					HideFileCounter++;
+				}
+				if (HideFileCounter == HideBitCountThreshold)
+					break;
+			}
+			if (HideFileCounter == HideBitCountThreshold)
+				break;
+		}
+		if (HideFileCounter == HideBitCountThreshold)
+			break;
+	}
+
+	jpeg_copy_critical_parameters(&inputInfo, &outputInfo);
+	jpeg_write_coefficients(&outputInfo, coeff_arrays);
+
+	jpeg_finish_compress(&outputInfo);
+	jpeg_finish_decompress(&inputInfo);
+	jpeg_destroy_compress(&outputInfo);
+	jpeg_destroy_decompress(&inputInfo);
+
+
+	fclose(inputFile);
+	fclose(outputFile);
+
+	BinaryFileSolver outSolver;
+	outSolver.setOutFilePath("F:\\test\\SchoolBadgeCopy.jpg");
+	uint8_t* newFile = new uint8_t[HideBitCountThreshold / 8];
+	StreamConvert StrmCon;
+	StrmCon.byteStreamToBinaryString(newFile, HideBitCountThreshold / 8, HideBitStream, HideBitCountThreshold, 1);
+	outSolver.AppendFile(newFile, HideBitCountThreshold / 8);
+
+
 }

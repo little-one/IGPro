@@ -46,6 +46,7 @@ protected:
 public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedButton2();
+	afx_msg void OnBnClickedButton3();
 };
 
 #ifndef _DEBUG  // ImageProView.cpp 中的调试版本
