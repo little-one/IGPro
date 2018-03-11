@@ -63,6 +63,9 @@
     <ClInclude Include="BinaryFileSolver.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="IJpegOpeAlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImagePro.cpp">
@@ -93,6 +96,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Encrypt_Decrpty.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="IJpegOpeAlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

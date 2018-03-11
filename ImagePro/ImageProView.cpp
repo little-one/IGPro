@@ -20,10 +20,16 @@ using namespace std;
 #endif
 
 #include <setjmp.h>
+
+#ifndef HIDENFILEPROCESS
 #include "BinaryFileSolver.h"
 #include "Encrypt_Decrpty.h"
 #include "FolderMonitor.h"
 #include "StreamConvert.h"
+#endif // !HIDENFILEPROCESS
+
+
+
 
 
 

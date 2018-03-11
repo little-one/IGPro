@@ -197,6 +197,7 @@
     <ClInclude Include="BinaryFileSolver.h" />
     <ClInclude Include="Encrypt_Decrpty.h" />
     <ClInclude Include="FolderMonitor.h" />
+    <ClInclude Include="IJpegOpeAlg.h" />
     <ClInclude Include="ImagePro.h" />
     <ClInclude Include="ImageProDoc.h" />
     <ClInclude Include="ImageProView.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="BinaryFileSolver.cpp" />
     <ClCompile Include="Encrypt_Decrpty.cpp" />
     <ClCompile Include="FolderMonitor.cpp" />
+    <ClCompile Include="IJpegOpeAlg.cpp" />
     <ClCompile Include="ImagePro.cpp" />
     <ClCompile Include="ImageProDoc.cpp" />
     <ClCompile Include="ImageProView.cpp" />

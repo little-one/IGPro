@@ -4,10 +4,14 @@
 
 #pragma once
 
+#ifndef EXTERNJPEGLIB
 extern "C"
 {
 #include "jpeglib.h" 
 }
+#endif // !EXTERNJPEGLIB
+
+
 
 class CImageProView : public CFormView
 {
