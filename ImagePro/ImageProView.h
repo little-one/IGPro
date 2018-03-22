@@ -52,12 +52,13 @@ protected:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
+	//afx_msg void OnBnClickedButton1();
+	//afx_msg void OnBnClickedButton2();
+	//afx_msg void OnBnClickedButton3();
+	//afx_msg void OnBnClickedButton4();
+	////void my_jpeg_error_exit(j_common_ptr cinfo);
+	//afx_msg void OnBnClickedButton5();
 	afx_msg void OnBnClickedButton1();
-	afx_msg void OnBnClickedButton2();
-	afx_msg void OnBnClickedButton3();
-	afx_msg void OnBnClickedButton4();
-	//void my_jpeg_error_exit(j_common_ptr cinfo);
-	afx_msg void OnBnClickedButton5();
 };
 
 #ifndef _DEBUG  // ImageProView.cpp 中的调试版本

@@ -15,7 +15,7 @@ private:
 	string outFilePath;
 	string currentDir;
 public:
-	int byteStream2BinaryString(uint8_t byteBuf[], int byteLen, char charBuf[], int charLen, int type);
+	int byteStream2BinaryString(uint8_t byteBuf[], int byteLen, char charBuf[], int charLen, int type);		//type为1时是二进制转char
 	int Encrypt(int byteLen);		//char数组转二进制
 	int Decrypt();		//二进制转char数组
 	

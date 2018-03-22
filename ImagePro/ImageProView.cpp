@@ -28,6 +28,10 @@ using namespace std;
 #include "StreamConvert.h"
 #endif // !HIDENFILEPROCESS
 
+#ifndef MYDATAHIDINGALGORITHM
+#include "LSBLossyImplantAlg.h"
+#endif // !MYDATAHIDINGALGORITHM
+
 
 
 
@@ -44,6 +48,7 @@ BEGIN_MESSAGE_MAP(CImageProView, CFormView)
 	ON_BN_CLICKED(IDC_BUTTON3, &CImageProView::OnBnClickedButton3)
 	ON_BN_CLICKED(IDC_BUTTON4, &CImageProView::OnBnClickedButton4)
 	ON_BN_CLICKED(IDC_BUTTON5, &CImageProView::OnBnClickedButton5)*/
+	ON_BN_CLICKED(IDC_BUTTON1, &CImageProView::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 struct my_error_mgr {
@@ -86,9 +91,7 @@ void CImageProView::OnInitialUpdate()
 	CFormView::OnInitialUpdate();
 	GetParentFrame()->RecalcLayout();
 	ResizeParentToFit();
-
 }
-
 
 // CImageProView 诊断
 
@@ -112,6 +115,11 @@ CImageProDoc* CImageProView::GetDocument() const // 非调试版本是内联的
 
 
 // CImageProView 消息处理程序
+void CImageProView::OnBnClickedButton1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	//LSBLossyImplantAlg lsb;
+}
 
 //void CImageProView::OnBnClickedButton1()
 //{
@@ -578,18 +586,6 @@ CImageProDoc* CImageProView::GetDocument() const // 非调试版本是内联的
 //				//blockptr2 = buffer2[by][bx];
 //				for (int bi = 0; bi < 64; bi++)
 //				{
-//					/*if (HideCounter > 74815)
-//					{
-//						short bp1 = blockptr1[bi];
-//						char HideChar = BitStream[HideCounter];
-//						CString caonima;
-//						CString caoniba;
-//						CString caonige;
-//						caonima.Format(_T("%d"), bp1);
-//						caoniba.Format(_T("%d"), HideCounter);
-//						caonige.Format(_T("%c"), HideChar);
-//						MessageBox(caonima + " " + caoniba + " " + caonige);
-//					}*/
 //					//short bp2 = blockptr2[bi];
 //					if (blockptr1[bi] == 0)
 //						continue;
@@ -649,3 +645,6 @@ CImageProDoc* CImageProView::GetDocument() const // 非调试版本是内联的
 //			continue;
 //	}
 //}
+
+
+
