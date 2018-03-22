@@ -160,6 +160,7 @@ StreamConvert::StreamConvert()
 StreamConvert::~StreamConvert()
 {
 }
+
 StreamConvert::StreamConvert(int N)
 {
 	InitializeBitMap();
@@ -195,4 +196,53 @@ pair<int, int> StreamConvert::GetBitRepresentation(int N)		//返回二进制与N进制互
 		return this->BitRepresentationMap[N];
 	else
 		return pair<int, int>(-1, -1);
+}
+char * StreamConvert::Convert_IntToBinaryStream(int num)
+{
+	char BinaryStream[BITCOUNT_INT + 1] = "";
+	int counter = 0;
+	for (int i = BITCOUNT_INT - 1; i >= 0; i--)
+	{
+		if (num >> i & 0x1)
+			BinaryStream[counter++] = '1';
+		else
+			BinaryStream[counter++] = '0';
+	}
+	return BinaryStream;
+}
+int StreamConvert::Convert_BinaryStreamToInt(char * BStream)
+{
+	int num = 0;
+	int counter = 0;
+	char tmpStr[BITCOUNT_INT + 1] = "";
+	strncpy_s(tmpStr, BStream, BITCOUNT_INT);
+	for (int i = 0; i < BITCOUNT_INT; i++)
+		num += tmpStr[i] - '0' << (BITCOUNT_INT - 1) - i;
+	return num;
+}
+
+char * StreamConvert::Convert_CharToBinaryStream(char num)
+{
+	char BinaryStream[8 * sizeof(char) + 1] = "";
+	int counter = 0;
+	for (int i = 8 * sizeof(char) - 1; i >= 0; i--)
+	{
+		if (num >> i & 0x1)
+			BinaryStream[counter++] = '1';
+		else
+			BinaryStream[counter++] = '0';
+	}
+	return BinaryStream;
+}
+
+char StreamConvert::Convert_BinaryStreamToChar(char * BStream)
+{
+	int num = 0;
+	int counter = 0;
+	char tmpStr[8 * sizeof(char) + 1] = "";
+	strncpy_s(tmpStr, BStream, 8 * sizeof(char));
+	for (int i = 0; i < 8 * sizeof(char); i++)
+		num += tmpStr[i] - '0' << (8 * sizeof(char) - 1) - i;
+	char cnum = (char)num;
+	return cnum;
 }

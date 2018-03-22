@@ -6,11 +6,9 @@ IJpegOpeAlg::IJpegOpeAlg()
 {
 }
 
-
 IJpegOpeAlg::~IJpegOpeAlg()
 {
 }
-
 
 void IJpegOpeAlg::GetImageInfo(jpeg_decompress_struct * cinfo, JDIMENSION * ImageWidth, JDIMENSION * ImageHeight, int * ImageComponents, J_COLOR_SPACE * ImageColorSpace) 
 {

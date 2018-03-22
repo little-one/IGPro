@@ -17,7 +17,7 @@ typedef struct
 {
 	vector<string> CarrierImagePathList;		//载体图像可以不止有一张
 	string HidenFilePath;		//隐藏文件路径
-	string NewFilePathList;			//新生成的图像路径
+	vector<string> NewFilePathList;			//新生成的图像路径
 }FileList;
 #endif // !FILENAMELIST
 
@@ -47,6 +47,11 @@ extern "C"
 #define ALGHEAD_BLOCK_NUM 8		//如果分快的话载体块的标号，从0开始
 #endif // !ALGHEAD
 
+#ifndef MEMORYSIZE
+#define MEMORYSIZE
+#define VIRT_MEMORY_SIZE 10000000
+#endif // !MEMORYSIZE
+
 
 
 class IJpegOpeAlg
@@ -66,15 +71,15 @@ public:
 
 	virtual ~IJpegOpeAlg();
 
-	virtual jpeg_decompress_struct* InitDecompressInfo() = 0;	//只创建decompress结构体并绑定错误处理器，需要手动绑定文件源
+	virtual void InitDecompressInfo(jpeg_decompress_struct* cinfo) = 0;	//只创建decompress结构体并绑定错误处理器，需要手动绑定文件源
 	//virtual jpeg_decompress_struct* InitDecompressInfo(char* filePath) = 0;	//创建decompress并以默认的只读方式打开文件绑定文件源
 	//virtual jpeg_decompress_struct* InitDecompressInfo(char* filePath, char* openMode) = 0;	//openMode代表打开文件的模式
-	virtual jpeg_decompress_struct* InitDecompressInfo(FILE* file) = 0;
+	virtual void InitDecompressInfo(jpeg_decompress_struct* cinfo, FILE* file) = 0;
 
-	virtual jpeg_compress_struct* InitCompressInfo() = 0;
+	virtual void InitCompressInfo(jpeg_compress_struct* cinfo) = 0;
 	//virtual jpeg_compress_struct* InitCompressInfo(char* filePath) = 0;
 	//virtual jpeg_compress_struct* InitCompressInfo(char* filePath, char* openMode) = 0;
-	virtual jpeg_compress_struct* InitCompressInfo(FILE* file) = 0;
+	virtual void InitCompressInfo(jpeg_compress_struct* cinfo, FILE* file) = 0;
 
 	virtual void ExecuteEmbedingAlg() = 0;		//此函数不作载荷检查，在调用之前就要做好载荷检查
 	virtual void ExecuteExtractingAlg() = 0;

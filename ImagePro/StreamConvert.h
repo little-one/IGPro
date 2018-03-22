@@ -6,6 +6,12 @@
 #include <map>
 #include <stdint.h>
 
+#ifndef BITCOUNT
+#define BITCOUNT
+#define BITCOUNT_INT (8*sizeof(int))
+#endif // !BITCOUNT_INT
+
+
 using namespace std;
 
 class StreamConvert
@@ -27,5 +33,10 @@ public:
 	StreamConvert();
 	StreamConvert(int N);
 	~StreamConvert();
+public:
+	char* Convert_IntToBinaryStream(int num);			
+	int Convert_BinaryStreamToInt(char* BStream);		//传入的BStream的大小必须是BITCOUNT_INT+1的
+	char* Convert_CharToBinaryStream(char num);			//将一个char字符转为二进制字符流
+	char Convert_BinaryStreamToChar(char* BStream);
 };
 
