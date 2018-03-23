@@ -45,6 +45,7 @@ extern "C"
 #define ALGHEAD_TYPE_LENGTH 8	//所有载体的头部的前8bit位用来描述使用的加密算法，不用做加密载体
 #define ALGHEAD_CONTENT_LENGTH 32	//载体的第9bit到第40位用来描述该载体内有多少位是被加密过的
 #define ALGHEAD_BLOCK_NUM 8		//如果分快的话载体块的标号，从0开始
+#define ALGHEAD_BLOCK_TOTALCOUNT 8	//分块的总块数
 #endif // !ALGHEAD
 
 #ifndef MEMORYSIZE
