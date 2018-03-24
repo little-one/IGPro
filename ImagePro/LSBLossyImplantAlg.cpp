@@ -77,6 +77,39 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 	//	fopen_s(&file, p, "rb");
 	//}
 	FileList fileList = this->GetFileList();
+	
+	//获取文件后缀名保存到信息最前面
+	char* SuffixArr = nullptr;
+	int SuffixCount = 0;
+	{
+		string s = fileList.HidenFilePath;
+		int PointIndex = s.find('.');
+		uint8_t* tmpStr = nullptr;
+		int charCount = 0;
+		if (PointIndex == -1)  //说明原文件名无后缀名
+		{
+			tmpStr = new uint8_t[2];
+			tmpStr[0] = '.';
+			tmpStr[1] = '.';
+			charCount = 2;
+		}
+		else
+		{
+			tmpStr = new uint8_t[s.size() - PointIndex + 1];
+			for (int i = PointIndex; i < s.size(); i++)
+			{
+				tmpStr[i - PointIndex] = s[i];
+			}
+			tmpStr[s.size() - PointIndex] = '.';
+			charCount = s.size() - PointIndex + 1;
+		}
+		SuffixCount = charCount * 8;
+		SuffixArr = new char[SuffixCount];
+		StreamConvert sc;
+		sc.byteStreamToBinaryString(tmpStr, charCount, SuffixArr, SuffixCount, 0);
+		delete[] tmpStr;
+	}
+
 	if (fileList.CarrierImagePathList.size() == 1)	//单载体
 	{
 		//初始化压缩结构
@@ -123,6 +156,24 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 			BinaryBitCount = FileBitCount;
 		}
 
+		char* FinalBinaryStream = nullptr;
+		int FinalBitCount = 0;
+		//合并后缀数组和文件内容数组
+		{
+			FinalBitCount = SuffixCount + BinaryBitCount;
+			FinalBinaryStream = new char[FinalBitCount];
+			for (int i = 0; i < SuffixCount; i++)
+			{
+				FinalBinaryStream[i] = SuffixArr[i];
+			}
+			for (int i = 0; i < BinaryBitCount; i++)
+			{
+				FinalBinaryStream[i + SuffixCount] = BinaryArray[i];
+			}
+			delete[] SuffixArr;
+			delete[] BinaryArray;
+		}
+
 		//读出量化因子
 		jvirt_barray_ptr* coeff_arrays;
 		coeff_arrays = jpeg_read_coefficients(&cinfo);
@@ -133,7 +184,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 		//写入嵌入位总数
 		{
 			StreamConvert sc;
-			char* CountBitStream = sc.Convert_IntToBinaryStream(BinaryBitCount);
+			char* CountBitStream = sc.Convert_IntToBinaryStream(FinalBitCount);
 
 			int BitDropOutNum = ALGHEAD_TYPE_LENGTH;
 			int dropCounter = 0;		//跳步计数器，需要先将算法信息头的8bit跳过去
@@ -384,7 +435,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 							}
 							else    //如果跳步计数器小于算法信息头的48bit则继续循环直到完全跳过算法信息头
 							{
-								switch (BinaryArray[HideCounter])
+								switch (FinalBinaryStream[HideCounter])
 								{
 								case '1':
 									if (blockptr[bi] % 2 == 0)
@@ -407,21 +458,21 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 								}
 								HideCounter++;
 							}
-							if (HideCounter == BinaryBitCount)
+							if (HideCounter == FinalBitCount)
 								break;
 						}
-						if (HideCounter == BinaryBitCount)
+						if (HideCounter == FinalBitCount)
 							break;
 					}
-					if (HideCounter == BinaryBitCount)
+					if (HideCounter == FinalBitCount)
 						break;
 				}
-				if (HideCounter == BinaryBitCount)
+				if (HideCounter == FinalBitCount)
 					break;
 			}
 		}
 
-		delete[] BinaryArray;
+		delete[] FinalBinaryStream;
 		//FinishDecompress(cinfo);
 		fclose(file);
 		
@@ -470,7 +521,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 void LSBLossyImplantAlg::ExecuteExtractingAlg()
 {
 	FileList fileList = this->GetFileList();
-	if (fileList.CarrierImagePathList.size == 1)
+	if (fileList.CarrierImagePathList.size() == 1)
 	{
 		//初始化压缩结构
 		FILE* file;
@@ -742,10 +793,47 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 			StreamConvert sc;
 			uint8_t* BitArray = new uint8_t[BinaryBitCount / 8];
 			sc.byteStreamToBinaryString(BitArray, BinaryBitCount / 8, BinaryStream, BinaryBitCount, 1);
+
+			//拆分后缀和信息部分
+			uint8_t* SuffixArry = nullptr;
+			uint8_t* ContentArry = nullptr;
+			int SuffixArryCount = 0;
+			int ContentArryCount = 0;
+			{
+				int PointCounter = 0;
+				for (int i = 0; i < BinaryBitCount / 8; i++)
+				{
+					if (BitArray[i] == '.')
+						PointCounter++;
+					if (PointCounter == 2)
+					{
+						SuffixArryCount = i+1;
+						ContentArryCount = BinaryBitCount / 8 - SuffixArryCount;
+						break;
+					}
+				}
+				SuffixArry = new uint8_t[SuffixArryCount];
+				for (int i = 0; i < SuffixArryCount; i++)
+				{
+					SuffixArry[i] = BitArray[i];
+				}
+				ContentArry = new uint8_t[ContentArryCount];
+				for (int i = 0; i < ContentArryCount; i++)
+				{
+					ContentArry[i] = BitArray[i + SuffixArryCount];
+				}
+			}
+			
+			string fileName = fileList.HidenFilePath;
+			string Suffix((char*)SuffixArry);
+			string outPath = fileName + Suffix;
+
 			BinaryFileSolver outSolver;
-			outSolver.setOutFilePath(fileList.HidenFilePath);
-			outSolver.AppendFile(BitArray, BinaryBitCount / 8);
+			outSolver.setOutFilePath(outPath);
+			outSolver.AppendFile(ContentArry, ContentArryCount);
 			delete[] BitArray;
+			delete[] SuffixArry;
+			delete[] ContentArry;
 		}
 
 		delete[] BinaryStream;

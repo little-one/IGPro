@@ -52,6 +52,7 @@ BEGIN_MESSAGE_MAP(CImageProView, CFormView)
 	ON_BN_CLICKED(IDC_BUTTON4, &CImageProView::OnBnClickedButton4)
 	ON_BN_CLICKED(IDC_BUTTON5, &CImageProView::OnBnClickedButton5)*/
 	ON_BN_CLICKED(IDC_BUTTON1, &CImageProView::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CImageProView::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 struct my_error_mgr {
@@ -655,5 +656,13 @@ void CImageProView::OnBnClickedButton1()
 //	}
 //}
 
-
-
+void CImageProView::OnBnClickedButton2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	FileList flist;
+	flist.CarrierImagePathList.push_back("F:\\test\\tt2.jpg");
+	flist.HidenFilePath = "F:\\test\\SchoolCpy";
+	flist.NewFilePathList.push_back("F:\\test\\tt3.jpg");
+	IJpegOpeAlg* JpegOpeAlg = new LSBLossyImplantAlg(&flist);
+	JpegOpeAlg->ExecuteExtractingAlg();
+}

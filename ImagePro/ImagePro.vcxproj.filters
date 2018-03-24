@@ -69,6 +69,12 @@
     <ClInclude Include="LSBLossyImplantAlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="LView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImagePro.cpp">
@@ -105,6 +111,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="LSBLossyImplantAlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RView.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

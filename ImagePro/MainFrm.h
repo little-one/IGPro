@@ -3,6 +3,8 @@
 //
 
 #pragma once
+#include "LView.h"
+#include "RView.h"
 
 class CMainFrame : public CFrameWnd
 {
@@ -11,6 +13,12 @@ protected: // 仅从序列化创建
 	CMainFrame();
 	DECLARE_DYNCREATE(CMainFrame)
 
+public:	//分割视图变量/////////////////////////////////////////////////////
+	CSplitterWnd m_wndSplitter1;
+	CSplitterWnd m_wndSplitter;
+public:
+	CLView* clv;
+	CRView* crv;
 // 特性
 public:
 
@@ -37,6 +45,8 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()
 
+	//virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
+	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 };
 
 
