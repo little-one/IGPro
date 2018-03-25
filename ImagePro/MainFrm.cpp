@@ -56,12 +56,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//SetWindowLong(this->m_hWnd, GWL_STYLE, 0);
 	//SetWindowLong(this->m_hWnd, GWL_EXSTYLE, 0);
 
-	if (!m_wndSplitter.CreateStatic(this, 1, 2, WS_CHILD | WS_VISIBLE))
-	{
-		TRACE("Failed to Create StaticSplitter\n");
-		return NULL;
-	}
-
 	//pContext->m_pNewViewClass = RUNTIME_CLASS(CLView);
 
 	//CRect rect;
@@ -142,9 +136,9 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 
 
-BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
-{
-	// TODO: 在此添加专用代码和/或调用基类
-
-	return CFrameWnd::OnCreateClient(lpcs, pContext);
-}
+//BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
+//{
+//	// TODO: 在此添加专用代码和/或调用基类
+//
+//	return CFrameWnd::OnCreateClient(lpcs, pContext);
+//}

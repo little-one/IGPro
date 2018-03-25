@@ -30,5 +30,8 @@ public:
 	virtual int CalPayLoads(FileList* fileList);
 	virtual ALGORITHM_NAME GetAlgName();
 
+	//debug”√
+	void ShowMessage(int num);
+
 };
 

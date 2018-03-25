@@ -124,10 +124,14 @@ void CImageProView::OnBnClickedButton1()
 	// TODO: 在此添加控件通知处理程序代码
 	//LSBLossyImplantAlg lsb;
 	FileList flist;
+	flist.CarrierImagePathList.push_back("F:\\test\\t1.jpg");
 	flist.CarrierImagePathList.push_back("F:\\test\\tt1.jpg");
-	flist.HidenFilePath = "F:\\test\\SchoolBadge.jpg";
+	flist.HidenFilePath = "F:\\test\\F16.BMP";
+	flist.NewFilePathList.push_back("F:\\test\\t2.jpg");
 	flist.NewFilePathList.push_back("F:\\test\\tt2.jpg");
 	IJpegOpeAlg* JpegOpeAlg = new LSBLossyImplantAlg(&flist);
+
+	//JpegOpeAlg->CalPayLoads(&flist);
 	JpegOpeAlg->ExecuteEmbedingAlg();
 }
 
@@ -660,8 +664,10 @@ void CImageProView::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	FileList flist;
+	flist.CarrierImagePathList.push_back("F:\\test\\t2.jpg");
 	flist.CarrierImagePathList.push_back("F:\\test\\tt2.jpg");
-	flist.HidenFilePath = "F:\\test\\SchoolCpy";
+	flist.HidenFilePath = "F:\\test\\F16Copy";
+	flist.NewFilePathList.push_back("F:\\test\\t3.jpg");
 	flist.NewFilePathList.push_back("F:\\test\\tt3.jpg");
 	IJpegOpeAlg* JpegOpeAlg = new LSBLossyImplantAlg(&flist);
 	JpegOpeAlg->ExecuteExtractingAlg();
