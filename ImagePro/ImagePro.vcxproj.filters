@@ -75,6 +75,9 @@
     <ClInclude Include="RView.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="HighCapabilityCompositeAlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImagePro.cpp">
@@ -117,6 +120,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="RView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="HighCapabilityCompositeAlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

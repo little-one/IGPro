@@ -1,6 +1,11 @@
 #pragma once  
 #include <windows.h> 
+
+#ifndef INFINITY
 #define INFINITY 1000000
+#endif // !INFINITY
+
+
 class FolderMonitor
 {
 public:
