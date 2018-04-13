@@ -27,7 +27,8 @@ typedef struct
 typedef enum :char
 {
 	ALG_UNKNOWN,
-	ALG_DCTLSB
+	ALG_DCTLSB,
+	ALG_COMPOSITE
 }ALGORITHM_NAME;
 #endif // !ALGORITHMNAME
 
@@ -47,6 +48,8 @@ extern "C"
 #define ALGHEAD_BLOCK_NUM 8		//如果分快的话载体块的标号，从0开始
 #define ALGHEAD_BLOCK_TOTALCOUNT 8	//分块的总块数
 #endif // !ALGHEAD
+
+
 
 #ifndef MEMORYSIZE
 #define MEMORYSIZE
@@ -84,7 +87,7 @@ public:
 
 	virtual void ExecuteEmbedingAlg() = 0;		//此函数不作载荷检查，在调用之前就要做好载荷检查
 	virtual void ExecuteExtractingAlg() = 0;
-	virtual int CalPayLoad(FILE* file) = 0;		//计算单个载体的有效载荷
+	virtual int CalPayLoad(string filePath) = 0;		//计算单个载体的有效载荷
 	virtual int CalPayLoads(FileList* fileList) = 0;		//计算多个载体的有效载荷
 	virtual ALGORITHM_NAME GetAlgName() = 0;	//返回嵌入算法名称
 

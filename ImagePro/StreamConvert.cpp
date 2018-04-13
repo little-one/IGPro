@@ -181,6 +181,7 @@ inline void StreamConvert::InitializeBitMap()
 	/*		12		   7          2		     */
 	/*		16		   4          1		     */
 	/*****************************************/
+	this->BitRepresentationMap.insert(pair<int, pair<int, int> >(2, pair<int, int>(1, 1)));
 	this->BitRepresentationMap.insert(pair<int, pair<int, int> >(3, pair<int, int>(3, 2)));
 	this->BitRepresentationMap.insert(pair<int, pair<int, int> >(4, pair<int, int>(2, 1)));
 	this->BitRepresentationMap.insert(pair<int, pair<int, int> >(5, pair<int, int>(2, 1)));
@@ -197,18 +198,19 @@ pair<int, int> StreamConvert::GetBitRepresentation(int N)		//返回二进制与N进制互
 	else
 		return pair<int, int>(-1, -1);
 }
-char * StreamConvert::Convert_IntToBinaryStream(int num)
+
+void StreamConvert::Convert_IntToBinaryStream(int num, char** BinaryStream)
 {
-	char BinaryStream[BITCOUNT_INT + 1] = "";
+	*BinaryStream = new char[BITCOUNT_INT+1];
+	(*BinaryStream)[BITCOUNT_INT] = '\0';
 	int counter = 0;
 	for (int i = BITCOUNT_INT - 1; i >= 0; i--)
 	{
 		if (num >> i & 0x1)
-			BinaryStream[counter++] = '1';
+			(*BinaryStream)[counter++] = '1';
 		else
-			BinaryStream[counter++] = '0';
+			(*BinaryStream)[counter++] = '0';
 	}
-	return BinaryStream;
 }
 int StreamConvert::Convert_BinaryStreamToInt(char * BStream)
 {
@@ -221,20 +223,19 @@ int StreamConvert::Convert_BinaryStreamToInt(char * BStream)
 	return num;
 }
 
-char * StreamConvert::Convert_CharToBinaryStream(char num)
+void StreamConvert::Convert_CharToBinaryStream(char num, char** BinaryStream)
 {
-	char BinaryStream[8 * sizeof(char) + 1] = "";
+	*BinaryStream = new char[8 * sizeof(char) + 1];
+	(*BinaryStream)[8 * sizeof(char)] = '\0';
 	int counter = 0;
 	for (int i = 8 * sizeof(char) - 1; i >= 0; i--)
 	{
 		if (num >> i & 0x1)
-			BinaryStream[counter++] = '1';
+			(*BinaryStream)[counter++] = '1';
 		else
-			BinaryStream[counter++] = '0';
+			(*BinaryStream)[counter++] = '0';
 	}
-	return BinaryStream;
 }
-
 char StreamConvert::Convert_BinaryStreamToChar(char * BStream)
 {
 	int num = 0;
@@ -245,4 +246,30 @@ char StreamConvert::Convert_BinaryStreamToChar(char * BStream)
 		num += tmpStr[i] - '0' << (8 * sizeof(char) - 1) - i;
 	char cnum = (char)num;
 	return cnum;
+}
+
+void StreamConvert::Convert_HalfCharToBinaryStream(char num, char** BinaryStream)
+{
+	*BinaryStream = new char[BITCOUNT_HALFCHAR+1];
+	(*BinaryStream)[BITCOUNT_HALFCHAR] = '\0';
+	int counter = 0;
+	for (int i = BITCOUNT_HALFCHAR - 1; i >= 0; i--)
+	{
+		if (num >> i & 0x1)
+			(*BinaryStream)[counter++] = '1';
+		else
+			(*BinaryStream)[counter++] = '0';
+	}
+}
+char StreamConvert::Convert_BinaryStreamToHalfChar(char * BStream)
+{
+	char num = 0;
+	int counter = 0;
+	char tmpStr[BITCOUNT_HALFCHAR + 1] = "";
+	strncpy_s(tmpStr, BStream, BITCOUNT_HALFCHAR);
+	for (int i = 0; i < BITCOUNT_HALFCHAR; i++)
+	{
+		num += tmpStr[i] - '0' << (BITCOUNT_HALFCHAR - 1) - i;
+	}
+	return num;
 }

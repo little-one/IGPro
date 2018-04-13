@@ -185,7 +185,8 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 		//写入嵌入位总数
 		{
 			StreamConvert sc;
-			char* CountBitStream = sc.Convert_IntToBinaryStream(FinalBitCount);
+			char* CountBitStream = nullptr;
+			sc.Convert_IntToBinaryStream(FinalBitCount, &CountBitStream);
 
 			int BitDropOutNum = ALGHEAD_TYPE_LENGTH;
 			int dropCounter = 0;		//跳步计数器，需要先将算法信息头的8bit跳过去
@@ -250,13 +251,15 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 				if (HideCounter == ALGHEAD_CONTENT_LENGTH)
 					break;
 			}
+			delete[] CountBitStream;
 		}
 
 		//写入块号
 		{
 			StreamConvert sc;
 			char num = (char)1;
-			char* BinaryStream = sc.Convert_CharToBinaryStream(num);
+			char* BinaryStream = nullptr;
+			sc.Convert_CharToBinaryStream(num, &BinaryStream);
 			
 			int BitDropOutNumType = ALGHEAD_TYPE_LENGTH;
 			int dropCounterType = 0;		//跳步计数器，需要先将算法信息头的8bit跳过去
@@ -333,13 +336,15 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 				if (HideCounter == ALGHEAD_BLOCK_NUM)
 					break;
 			}
+			delete[] BinaryStream;
 		}
 
 		//写入总块数
 		{
 			StreamConvert sc;
 			char num = (char)1;
-			char* BinaryStream = sc.Convert_CharToBinaryStream(num);
+			char* BinaryStream = nullptr;
+			sc.Convert_CharToBinaryStream(num, &BinaryStream);
 
 			int BitDropOutNum = ALGHEAD_TYPE_LENGTH + ALGHEAD_CONTENT_LENGTH + ALGHEAD_BLOCK_NUM;
 			int dropCounter = 0;
@@ -404,6 +409,8 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 				if (HideCounter == ALGHEAD_BLOCK_TOTALCOUNT)
 					break;
 			}
+
+			delete[] BinaryStream;
 		}
 
 		//写入信息
@@ -473,7 +480,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 			}
 		}
 
-		delete[] FinalBinaryStream;
+		//delete[] FinalBinaryStream;
 		//FinishDecompress(cinfo);
 		fclose(file);
 		
@@ -520,7 +527,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 		int CurStreamPosition = 0;		//由于是分块加密，因此FinalBitCount肯定大于任何一个载媒的有效载荷，因此要时刻记录已经加密完的bit位以便后续的工作
 		
         /////////////////////////////////////////////
-		ShowMessage(FinalBitCount);
+		//ShowMessage(FinalBitCount);
 		////////////////////////////////////////////
 		
 		for (int i = 0; i <fileList.CarrierImagePathList.size(); i++)
@@ -528,12 +535,12 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 			//计算payload
 			int payload;
 			{
-				FILE* tFile;
+				//FILE* tFile;
 				string fName = fileList.CarrierImagePathList[i];
-				const char* p = fName.data();
-				fopen_s(&tFile, p, "rb");
-				payload = this->CalPayLoad(tFile);
-				fclose(tFile);
+				//const char* p = fName.data();
+				//fopen_s(&tFile, p, "rb");
+				payload = this->CalPayLoad(fName);
+				//fclose(tFile);
 			}
 			if (payload >= FinalBitCount - CurStreamPosition)
 			{
@@ -541,7 +548,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 			}
 			
 			/////////////////////////////////////////////
-			ShowMessage(payload);
+			//ShowMessage(payload);
 			////////////////////////////////////////////
 
 			//载入载媒文件
@@ -568,7 +575,8 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 			//写入嵌入位总数
 			{
 				StreamConvert sc;
-				char* CountBitStream = sc.Convert_IntToBinaryStream(payload);
+				char* CountBitStream = nullptr;
+				sc.Convert_IntToBinaryStream(payload, &CountBitStream);
 
 				int BitDropOutNum = ALGHEAD_TYPE_LENGTH;
 				int dropCounter = 0;		//跳步计数器，需要先将算法信息头的8bit跳过去
@@ -633,13 +641,15 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 					if (HideCounter == ALGHEAD_CONTENT_LENGTH)
 						break;
 				}
+				delete[] CountBitStream;
 			}
 
 			//写入块号
 			{
 				StreamConvert sc;
 				char num = (char)CurBlockNum;
-				char* BinaryStream = sc.Convert_CharToBinaryStream(num);
+				char* BinaryStream = nullptr;
+				sc.Convert_CharToBinaryStream(num, &BinaryStream);
 
 				int BitDropOutNumType = ALGHEAD_TYPE_LENGTH;
 				int dropCounterType = 0;		//跳步计数器，需要先将算法信息头的8bit跳过去
@@ -717,13 +727,15 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 						break;
 				}
 				CurBlockNum++;
+				delete[] BinaryStream;
 			}
 
 			//写入总块数
 			{
 				StreamConvert sc;
 				char num = (char)TotalBlockNum;
-				char* BinaryStream = sc.Convert_CharToBinaryStream(num);
+				char* BinaryStream = nullptr;
+				sc.Convert_CharToBinaryStream(num, &BinaryStream);
 
 				int BitDropOutNum = ALGHEAD_TYPE_LENGTH + ALGHEAD_CONTENT_LENGTH + ALGHEAD_BLOCK_NUM;
 				int dropCounter = 0;
@@ -788,6 +800,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 					if (HideCounter == ALGHEAD_BLOCK_TOTALCOUNT)
 						break;
 				}
+				delete[] BinaryStream;
 			}
 
 			//写入信息
@@ -858,7 +871,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 				CurStreamPosition = HideCounter;
 
 				/////////////////////////////////////////////
-				ShowMessage(CurStreamPosition);
+				//ShowMessage(CurStreamPosition);
 				////////////////////////////////////////////
 
 			}
@@ -898,8 +911,11 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 			fclose(outFile);
 		}
 
-		delete[] FinalBinaryStream;
 	}
+
+	//delete[] SuffixArr;
+	//delete[] BinaryArray;
+	delete[] FinalBinaryStream;
 }
 
 void LSBLossyImplantAlg::ExecuteExtractingAlg()
@@ -914,6 +930,7 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 			const char* p = fName.data();
 			if (fopen_s(&file, p, "rb") != 0)
 				return;
+			//delete[] p;
 		}
 		jpeg_decompress_struct cinfo;
 		jpeg_error_mgr jerr;
@@ -1350,10 +1367,10 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 			FinalBitCount += BinaryBitCount;
 
 			/////////////////////////////////////////////
-			ShowMessage(BinaryBitCount);
+			//ShowMessage(BinaryBitCount);
 			////////////////////////////////////////////
 			/////////////////////////////////////////////
-			ShowMessage(FinalBitCount);
+			//ShowMessage(FinalBitCount);
 			////////////////////////////////////////////
 
 			short BlockNum = 0;
@@ -1420,7 +1437,7 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 			}
 
 			/////////////////////////////////////////////
-			ShowMessage(BlockNum);
+			//ShowMessage(BlockNum);
 			////////////////////////////////////////////
 
 			short TotalBlockCount = 0;
@@ -1486,7 +1503,7 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 				TotalBlockCount = (short)sc.Convert_BinaryStreamToChar(BlockNumCharArry);
 			}
 			/////////////////////////////////////////////
-			ShowMessage(TotalBlockCount);
+			//ShowMessage(TotalBlockCount);
 			////////////////////////////////////////////
 
 			char* BinaryStream = new char[BinaryBitCount];
@@ -1586,7 +1603,7 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 		char* FinalBitStream = new char[FinalBitCount];
 
 		/////////////////////////////////////////////
-		ShowMessage(FinalBitCount);
+		//ShowMessage(FinalBitCount);
 		////////////////////////////////////////////
 
 		int currentPosition = 0;
@@ -1601,7 +1618,7 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 				}
 				currentPosition += BinaryBitCount;
 				/////////////////////////////////////////////
-				ShowMessage(currentPosition);
+				//ShowMessage(currentPosition);
 				////////////////////////////////////////////
 				delete[] BinaryStream;
 			}
@@ -1659,8 +1676,13 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 	}
 }
 
-int LSBLossyImplantAlg::CalPayLoad(FILE * file)
+int LSBLossyImplantAlg::CalPayLoad(string filePath)
 {
+	FILE* file;
+	{
+		const char* p = filePath.data();
+		fopen_s(&file, p, "rb");
+	}
 	jpeg_decompress_struct cinfo;
 	jpeg_error_mgr jerr;
 	cinfo.err = jpeg_std_error(&jerr);
@@ -1700,6 +1722,7 @@ int LSBLossyImplantAlg::CalPayLoad(FILE * file)
 	HideCounter -= ALGHEAD_CONTENT_LENGTH;
 	HideCounter -= ALGHEAD_BLOCK_NUM;
 	HideCounter -= ALGHEAD_BLOCK_TOTALCOUNT;
+	fclose(file);
 	return HideCounter;
 }
 
@@ -1709,11 +1732,12 @@ int LSBLossyImplantAlg::CalPayLoads(FileList * fileList)
 	for (auto i = fileList->CarrierImagePathList.begin(); i != fileList->CarrierImagePathList.end(); i++)
 	{
 		string fName = *i;
-		FILE* file;
-		const char* p = fName.data();
-		fopen_s(&file, p, "rb");
-		HideCounter += CalPayLoad(file);
-		fclose(file);
+		HideCounter += CalPayLoad(fName);
+		//FILE* file;
+		//const char* p = fName.data();
+		//fopen_s(&file, p, "rb");
+		//
+		//fclose(file);
 	}
 	return HideCounter;
 }

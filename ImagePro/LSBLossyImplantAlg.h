@@ -29,7 +29,7 @@ public:
 
 	virtual void ExecuteEmbedingAlg();
 	virtual void ExecuteExtractingAlg();
-	virtual int CalPayLoad(FILE* file);
+	virtual int CalPayLoad(string filePath);
 	virtual int CalPayLoads(FileList* fileList);
 	virtual ALGORITHM_NAME GetAlgName();
 
