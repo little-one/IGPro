@@ -239,7 +239,7 @@ void StreamConvert::Convert_CharToBinaryStream(char num, char** BinaryStream)
 char StreamConvert::Convert_BinaryStreamToChar(char * BStream)
 {
 	int num = 0;
-	int counter = 0;
+	//int counter = 0;
 	char tmpStr[8 * sizeof(char) + 1] = "";
 	strncpy_s(tmpStr, BStream, 8 * sizeof(char));
 	for (int i = 0; i < 8 * sizeof(char); i++)
@@ -269,7 +269,16 @@ char StreamConvert::Convert_BinaryStreamToHalfChar(char * BStream)
 	strncpy_s(tmpStr, BStream, BITCOUNT_HALFCHAR);
 	for (int i = 0; i < BITCOUNT_HALFCHAR; i++)
 	{
-		num += tmpStr[i] - '0' << (BITCOUNT_HALFCHAR - 1) - i;
+		num += (tmpStr[i] - '0') << ((BITCOUNT_HALFCHAR - 1) - i);
 	}
 	return num;
 }
+
+int StreamConvert::Convert_CharToInt(char cnum)
+{
+	int num = (int)cnum;
+	if (num < 0)
+		num = 256 + num;
+	return num;
+}
+

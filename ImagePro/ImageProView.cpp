@@ -127,7 +127,7 @@ void CImageProView::OnBnClickedButton1()
 	FileList flist;
 	flist.CarrierImagePathList.push_back("F:\\test\\tt1.jpg");
 	//flist.CarrierImagePathList.push_back("F:\\test\\tt1.jpg");
-	flist.HidenFilePath = "F:\\test\\SchoolBadge.jpg";
+	flist.HidenFilePath = "F:\\test\\seimg.jpg";
 	flist.NewFilePathList.push_back("F:\\test\\t2.jpg");
 	//flist.NewFilePathList.push_back("F:\\test\\tt2.jpg");
 	IJpegOpeAlg* JpegOpeAlg = new HighCapabilityCompositeAlg(&flist, 3, 2);
@@ -142,7 +142,7 @@ void CImageProView::OnBnClickedButton2()
 	FileList flist;
 	flist.CarrierImagePathList.push_back("F:\\test\\t2.jpg");
 	//flist.CarrierImagePathList.push_back("F:\\test\\tt2.jpg");
-	flist.HidenFilePath = "F:\\test\\CpySchoolBadge";
+	flist.HidenFilePath = "F:\\test\\CpySeimg";
 	//flist.NewFilePathList.push_back("F:\\test\\t3.jpg");
 	flist.NewFilePathList.push_back("F:\\test\\t3.jpg");
 	IJpegOpeAlg* JpegOpeAlg = new HighCapabilityCompositeAlg(&flist, 3, 2);

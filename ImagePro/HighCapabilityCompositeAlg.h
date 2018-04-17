@@ -20,10 +20,10 @@
 #define COMPOSITE_BLOCK_NUM 4		//分块的块号
 #define COMPOSITE_BLOCK_COUNTE 4	//分块的总块数
 #define COMPOSITE_MATRIX_K 4		//矩阵编码的K值
-#define COMPOSITE_MATRIX_STRIDE 4		//矩阵编码步长
+#define COMPOSITE_MATRIX_STRIDE 8		//矩阵编码步长
 #define COMPOSITE_MATRIX_CONTENT 32		//矩阵编码嵌入密文位数
 #define COMPOSITE_TABLE_K 4		//量化表嵌入K值
-#define COMPOSITE_TABLE_STRIDE 4		//量化表嵌入步长
+#define COMPOSITE_TABLE_STRIDE 8		//量化表嵌入步长
 #define COMPOSITE_TABLE_CONTENT 32		//量化表嵌入密文位数
 #define COMPOSITE_TABLE_LOSE_R (4*12)		//量化表损失值记录
 #endif // !COMPOSITE_ALG_HEAD

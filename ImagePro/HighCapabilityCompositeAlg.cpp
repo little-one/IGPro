@@ -160,7 +160,7 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 		{
 			CFileStatus status;
 			CString strFile = _T("");
-			CA2T szr(fileList.CarrierImagePathList[0].c_str());
+			CA2T szr(fileList.HidenFilePath.c_str());
 			strFile = (LPCTSTR)szr;
 			CFile::GetStatus(strFile, status);
 			long iSizeOfFile;
@@ -200,6 +200,32 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 			TStride = effiBitPerGroup - Table_NBit;
 		}
 		
+		/*
+		CString str_BCount;
+		CString str_TEffiBitCount;
+		CString str_fileBitCount;
+		CString str_MPayLoad;
+		CString str_TPayLoad;
+		CString str_MBit;
+		CString str_TBit;
+		CString str_MStride;
+		CString str_TStride;
+
+		str_BCount.Format(_T("%d"), BCount);
+		str_TEffiBitCount.Format(_T("%d"), TEffiBitCount);
+		str_fileBitCount.Format(_T("%d"), fileBitCount);
+		str_MPayLoad.Format(_T("%d"), MPayLoad);
+		str_TPayLoad.Format(_T("%d"), TPayLoad);
+		str_MBit.Format(_T("%d"), MBit);
+		str_TBit.Format(_T("%d"), TBit);
+		str_MStride.Format(_T("%d"), MStride);
+		str_TStride.Format(_T("%d"), TStride);
+
+		CString total = str_BCount + " " + str_TEffiBitCount + " " + str_fileBitCount + " " + str_MPayLoad + " " + str_TPayLoad + " " + str_MBit + " " + str_TBit
+		+ " " + str_MStride + " " + str_TStride;
+		ShowMessage(total);
+		*/
+
 		FILE* file;
 		{
 			string fName = fileList.CarrierImagePathList[0];
@@ -241,13 +267,13 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 			char* Stream_Mk = nullptr;
 			sc.Convert_HalfCharToBinaryStream(Mk, &Stream_Mk);
 			char* Stream_Ms = nullptr;
-			sc.Convert_HalfCharToBinaryStream(Ms, &Stream_Ms);
+			sc.Convert_CharToBinaryStream(Ms, &Stream_Ms);
 			char* Stream_MEmbMessBitCount = nullptr;
 			sc.Convert_IntToBinaryStream(MEmbMessBitCount, &Stream_MEmbMessBitCount);
 			char* Stream_Tk = nullptr;
 			sc.Convert_HalfCharToBinaryStream(Tk, &Stream_Tk);
 			char* Stream_Ts = nullptr;
-			sc.Convert_HalfCharToBinaryStream(Ts, &Stream_Ts);
+			sc.Convert_CharToBinaryStream(Ts, &Stream_Ts);
 			char* Stream_TEmbMessBitCount = nullptr;
 			sc.Convert_IntToBinaryStream(TEmbMessBitCount, &Stream_TEmbMessBitCount);
 
@@ -312,7 +338,7 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 							else if (PositionCounter < ALGHEAD_TYPE_LENGTH + COMPOSITE_BLOCK_NUM
 								+ COMPOSITE_BLOCK_COUNTE)		//写入分块总块数
 							{
-								switch (Stream_BlockNum[HideCounter_BlockCount])
+								switch (Stream_BlockCount[HideCounter_BlockCount])
 								{
 								case '1':
 									if (blockp % 2 == 0)
@@ -546,8 +572,7 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 			delete[] Stream_TEmbMessBitCount;
 
 		}
-
-		//牛逼呀
+		
 		fclose(file);
 		FILE* outFile;
 		{
@@ -822,12 +847,13 @@ void HighCapabilityCompositeAlg::ExecuteExtractingAlg()
 			blockNum = sc.Convert_BinaryStreamToHalfChar(Stream_BlockNum);
 			char blockCount = sc.Convert_BinaryStreamToHalfChar(Stream_BlockCount);
 			char Mk = sc.Convert_BinaryStreamToHalfChar(Stream_Mk);
-			char Ms = sc.Convert_BinaryStreamToHalfChar(Stream_Ms);
+			char Ms = sc.Convert_BinaryStreamToChar(Stream_Ms);
 			int MEmbMessBitCount = sc.Convert_BinaryStreamToInt(Stream_MEmbMessBitCount);
 			char Tk = sc.Convert_BinaryStreamToHalfChar(Stream_Tk);
-			char Ts = sc.Convert_BinaryStreamToHalfChar(Stream_Ts);
+			char Ts = sc.Convert_BinaryStreamToChar(Stream_Ts);
 			int TEmbMessBitCount = sc.Convert_BinaryStreamToInt(Stream_TEmbMessBitCount);
 
+			/*
 			CString str_BlockNum;
 			CString str_BlockCount;
 			CString str_Mk;
@@ -836,7 +862,7 @@ void HighCapabilityCompositeAlg::ExecuteExtractingAlg()
 			CString str_Tk;
 			CString str_Ts;
 			CString str_TEmbMessBitCount;
-
+			
 			str_BlockNum.Format(_T("%d"), (int)blockNum);
 			str_BlockCount.Format(_T("%d"), (int)blockCount);
 			str_Mk.Format(_T("%d"), (int)Mk);
@@ -846,9 +872,11 @@ void HighCapabilityCompositeAlg::ExecuteExtractingAlg()
 			str_Ts.Format(_T("%d"), (int)Ts);
 			str_TEmbMessBitCount.Format(_T("%d"), TEmbMessBitCount);
 
-			CString sb = str_BlockNum + _T(" ") + str_BlockCount + _T(" ") + str_Mk + _T(" ") + str_Ms + _T(" ") + str_MEmbMessBitCount 
+			CString sb = str_BlockNum + _T(" ") + str_BlockCount + _T(" ") + str_Mk + _T(" ") + str_Ms + _T(" ") + str_MEmbMessBitCount
 				+ _T(" ") + str_Tk + _T(" ") + str_Ts + _T(" ") + str_TEmbMessBitCount;
 			ShowMessage(sb);
+			*/
+			
 
 			delete[] Stream_BlockNum;
 			delete[] Stream_BlockCount;
@@ -859,6 +887,7 @@ void HighCapabilityCompositeAlg::ExecuteExtractingAlg()
 			delete[] Stream_Ts;
 			delete[] Stream_TEmbMessBitCount;
 		}
+
 
 		fclose(file);
 	}
