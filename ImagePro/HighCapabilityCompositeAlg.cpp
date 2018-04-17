@@ -2,7 +2,6 @@
 #include "HighCapabilityCompositeAlg.h"
 #include "MainFrm.h"
 #include <math.h>
-#include <iostream>
 
 void HighCapabilityCompositeAlg::InitDecompressInfo(jpeg_decompress_struct * cinfo)
 {
@@ -157,7 +156,8 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 
 		int fileBitCount = 0;
 		//计算文件大小
-		{
+		fileBitCount = FinalBitCount;
+		/*{
 			CFileStatus status;
 			CString strFile = _T("");
 			CA2T szr(fileList.HidenFilePath.c_str());
@@ -166,7 +166,7 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 			long iSizeOfFile;
 			iSizeOfFile = status.m_size;
 			fileBitCount = iSizeOfFile * 8;
-		}
+		}*/
 
 		int MPayLoad = 0;
 		int TPayLoad = 0;
@@ -199,7 +199,7 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 			int effiBitPerGroup = floor((double)TEffiBitCount / GroupNum);
 			TStride = effiBitPerGroup - Table_NBit;
 		}
-		
+
 		/*
 		CString str_BCount;
 		CString str_TEffiBitCount;
@@ -572,7 +572,142 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 			delete[] Stream_TEmbMessBitCount;
 
 		}
-		
+
+		//M算法嵌入
+		bool breakFlg = false;		//结束标识
+		{
+			int dropCounter = 0;
+			int dropBit = ALGHEAD_TYPE_LENGTH + COMPOSITE_BLOCK_NUM
+				+ COMPOSITE_BLOCK_COUNTE + COMPOSITE_MATRIX_K + COMPOSITE_MATRIX_STRIDE
+				+ COMPOSITE_MATRIX_CONTENT + COMPOSITE_TABLE_K + COMPOSITE_TABLE_STRIDE
+				+ COMPOSITE_TABLE_CONTENT + COMPOSITE_TABLE_LOSE_R;
+
+			int HideCounter = 0;		//密文计数器，用来记录当前记录的密文指针
+			int GroupCounter = 0;		//控制组采集，数据采集够一组之后就置零
+			int PGroupBitCount_PayLoad = pow(2, this->MatrixK) - 1;		//M算法中每组载体图像的位数  k位密文需要 2^k-1位嵌入
+			JCOEFPTR* SrcDataGroup = (JCOEFPTR*)(cinfo.mem->alloc_small)((j_common_ptr)&cinfo, JPOOL_IMAGE, sizeof(JCOEFPTR) * PGroupBitCount_PayLoad);
+			char* SecretBitGroup = nullptr;
+			char* ZOSrcBitGroup = nullptr;
+
+			for (int ci = 0; ci < 3; ci++)
+			{
+				JBLOCKARRAY buffer;
+				JCOEFPTR blockptr;
+				jpeg_component_info* compptr;
+				compptr = cinfo.comp_info + ci;
+				for (int by = 0; by < compptr->height_in_blocks; by++)
+				{
+					buffer = (cinfo.mem->access_virt_barray)((j_common_ptr)&cinfo, coeff_arrays[ci], 0, (JDIMENSION)1, FALSE);
+					for (int bx = 0; bx < compptr->width_in_blocks; bx++)
+					{
+						blockptr = buffer[by][bx];
+						for (int bi = 0; bi < 64; bi++)
+						{
+							short blockp = blockptr[bi];
+							if (blockptr == 0)
+								continue;
+							if (dropCounter < dropBit)		//跳头
+							{
+								dropCounter++;
+								continue;
+							}
+							else        //进入数据区
+							{
+								SrcDataGroup[GroupCounter] = &(blockptr[bi]);	//进行组采集
+								GroupCounter++;
+
+								if (GroupCounter == PGroupBitCount_PayLoad)		//组采集完毕，对该组数据进行嵌入操作并将组计数器置零
+								{
+									if (!GetSecretBitGroup(&SecretBitGroup, this->MatrixK, FinalBinaryStream, FinalBitCount, HideCounter))		//未发生填充，即剩余密文多于K个
+									{
+										HideCounter += this->MatrixK;
+									}
+									else
+									{
+										breakFlg = true;
+									}
+									//处理该组密文
+									{
+										GetZOStreamGroup(&ZOSrcBitGroup, SrcDataGroup, PGroupBitCount_PayLoad);		//先将载体处理为01序列
+
+										//矩阵编码
+
+									}
+
+									GroupCounter = 0;	//组采集计数器置零
+									delete[] SecretBitGroup;
+
+								}
+
+								if (breakFlg)
+									break;
+							}
+							if (breakFlg)
+								break;
+						}
+						if (breakFlg)
+							break;
+					}
+					if (breakFlg)
+						break;
+				}
+				if (breakFlg)
+					break;
+			}
+			/*
+			ShowMessage(_T("here we go"));
+			*(test[0]) = 3;
+			HideCounter = 0;
+			dropCounter = 0;
+			for (int ci = 0; ci < 3; ci++)
+			{
+			JBLOCKARRAY buffer;
+			JCOEFPTR blockptr;
+			jpeg_component_info* compptr;
+			compptr = cinfo.comp_info + ci;
+			for (int by = 0; by < compptr->height_in_blocks; by++)
+			{
+			buffer = (cinfo.mem->access_virt_barray)((j_common_ptr)&cinfo, coeff_arrays[ci], 0, (JDIMENSION)1, FALSE);
+			for (int bx = 0; bx < compptr->width_in_blocks; bx++)
+			{
+			blockptr = buffer[by][bx];
+			for (int bi = 0; bi < 64; bi++)
+			{
+			short blockp = blockptr[bi];
+			if (blockptr == 0)
+			continue;
+			if (dropCounter < dropBit)		//跳头
+			{
+			dropCounter++;
+			continue;
+			}
+			else        //进入数据区
+			{
+			HideCounter++;
+			//测试
+			{
+			CString str;
+			str.Format(_T("%d"), blockp);
+			ShowMessage(str);
+			}
+			if (HideCounter == 8)
+			break;
+			}
+			if (HideCounter == 8)
+			break;
+			}
+			if (HideCounter == 8)
+			break;
+			}
+			if (HideCounter == 8)
+			break;
+			}
+			if (HideCounter == 8)
+			break;
+			}
+			*/
+
+		}
 		fclose(file);
 		FILE* outFile;
 		{
@@ -610,6 +745,8 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 	{
 
 	}
+
+	delete[] FinalBinaryStream;
 }
 
 void HighCapabilityCompositeAlg::ExecuteExtractingAlg()
@@ -1061,4 +1198,44 @@ void HighCapabilityCompositeAlg::ShowMessage(CString str)
 {
 	CMainFrame* pMainfram = (CMainFrame*)AfxGetApp()->m_pMainWnd;
 	MessageBox(pMainfram->GetSafeHwnd(), str, _T("123"), 1);
+}
+
+inline bool HighCapabilityCompositeAlg::GetSecretBitGroup(char ** SecretStream, int bitCount, const char const * fileStream, int fileBitCount, int position)		//如果fileStream剩余的字节已经不足以作为一个bitCount长度的分组，则用2补齐并返回true
+{
+	*SecretStream = new char[bitCount+1];
+	(*SecretStream)[bitCount] = '\0';
+	bool endFlg = false;
+	for (int i = 0; i < bitCount; i++)
+	{
+		if (position + i >= fileBitCount)
+		{
+			(*SecretStream)[i] = '2';
+			endFlg = true;
+		}
+		else
+			(*SecretStream)[i] = fileStream[position + i];
+	}
+	return endFlg;
+}
+
+inline void HighCapabilityCompositeAlg::GetZOStreamGroup(char ** ZOStream, const JCOEFPTR const * SrcDataGroup, int PGroupPayload)
+{
+	(*ZOStream) = new char[PGroupPayload];
+	short tmp = 0;
+	for (int i = 0; i < PGroupPayload; i++)
+	{
+		tmp = *(SrcDataGroup[i]);
+		if (tmp % 2 == 1)
+		{
+			(*ZOStream)[i] = '1';
+		}
+		else if (tmp % 2 == -1)
+		{
+			(*ZOStream)[i] = '2';
+		}
+		else if (tmp % 2 == 0)
+		{
+			(*ZOStream)[i] = '0';
+		}
+	}
 }

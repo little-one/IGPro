@@ -46,5 +46,6 @@ public:
 	char Convert_BinaryStreamToHalfChar(char* BStream);		//将4bit长度的字符数组流转为char， 传入的BStream必须为长度为4的，如果大于4则截取前4位
 
 	int Convert_CharToInt(char cnum);		//
+	int Convert_KStreamToInt(const char* BStream, int K);		//将K位比特流转为int，K必须小于BStream数组的长度
 };
 

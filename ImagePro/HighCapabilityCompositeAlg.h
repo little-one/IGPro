@@ -61,5 +61,7 @@ protected:
 	int CalEffectiveBitsCount(FILE* file);		//自动去除头部8位算法描述位
 	int GetEffectiveBitsCount(string filePath);		//获取fileList中某载媒的可修改比特位总数
 	void ShowMessage(CString str);			//调试专用
+	inline bool GetSecretBitGroup(char** SecretStream, int bitCount, const char const * fileStream, int fileBitCount, int position);
+	inline void GetZOStreamGroup(char** ZOStream, const JCOEFPTR const * SrcDataGroup, int PGroupPayload);
 };
 

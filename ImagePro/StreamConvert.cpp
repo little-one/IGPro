@@ -282,3 +282,13 @@ int StreamConvert::Convert_CharToInt(char cnum)
 	return num;
 }
 
+int StreamConvert::Convert_KStreamToInt(const char * BStream, int K)
+{
+	int num = 0;
+	for (int i = 0; i < K; i++)
+	{
+		num += (BStream[i] - '0') << (K - 1 - i);
+	}
+	return num;
+}
+
