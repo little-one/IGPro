@@ -207,7 +207,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 						for (int bi = 0; bi < 64; bi++)
 						{
 							short blockp = blockptr[bi];
-							if (blockptr == 0)
+							if (blockp == 0)
 								continue;
 							if (dropCounter < ALGHEAD_TYPE_LENGTH)
 							{
@@ -283,7 +283,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 						for (int bi = 0; bi < 64; bi++)
 						{
 							short blockp = blockptr[bi];
-							if (blockptr == 0)
+							if (blockp == 0)
 								continue;
 							if (dropCounterType < BitDropOutNumType)
 							{
@@ -365,7 +365,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 						for (int bi = 0; bi < 64; bi++)
 						{
 							short blockp = blockptr[bi];
-							if (blockptr == 0)
+							if (blockp == 0)
 								continue;
 							if (dropCounter < BitDropOutNum)
 							{
@@ -434,7 +434,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 						for (int bi = 0; bi < 64; bi++)
 						{
 							short blockp = blockptr[bi];
-							if (blockptr == 0)
+							if (blockp == 0)
 								continue;
 							if (dropCounter < DropOutBitCount)
 							{
@@ -597,7 +597,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 							for (int bi = 0; bi < 64; bi++)
 							{
 								short blockp = blockptr[bi];
-								if (blockptr == 0)
+								if (blockp == 0)
 									continue;
 								if (dropCounter < ALGHEAD_TYPE_LENGTH)
 								{
@@ -673,7 +673,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 							for (int bi = 0; bi < 64; bi++)
 							{
 								short blockp = blockptr[bi];
-								if (blockptr == 0)
+								if (blockp == 0)
 									continue;
 								if (dropCounterType < BitDropOutNumType)
 								{
@@ -756,7 +756,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 							for (int bi = 0; bi < 64; bi++)
 							{
 								short blockp = blockptr[bi];
-								if (blockptr == 0)
+								if (blockp == 0)
 									continue;
 								if (dropCounter < BitDropOutNum)
 								{
@@ -824,7 +824,7 @@ void LSBLossyImplantAlg::ExecuteEmbedingAlg()
 							for (int bi = 0; bi < 64; bi++)
 							{
 								short blockp = blockptr[bi];
-								if (blockptr == 0)
+								if (blockp == 0)
 									continue;
 								if (dropCounter < DropOutBitCount)
 								{
@@ -971,7 +971,7 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 						for (int bi = 0; bi < 64; bi++)
 						{
 							short blockp = blockptr[bi];
-							if (blockptr == 0)
+							if (blockp == 0)
 								continue;
 							if (dropCounter < BitDropOutNum)
 							{
@@ -1034,7 +1034,7 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 						for (int bi = 0; bi < 64; bi++)
 						{
 							short blockp = blockptr[bi];
-							if (blockptr == 0)
+							if (blockp == 0)
 								continue;
 							if (dropCounter < BitDropOutNum)
 							{
@@ -1097,7 +1097,7 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 						for (int bi = 0; bi < 64; bi++)
 						{
 							short blockp = blockptr[bi];
-							if (blockptr == 0)
+							if (blockp == 0)
 								continue;
 							if (dropCounter < BitDropOutNum)
 							{
@@ -1155,7 +1155,7 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 						for (int bi = 0; bi < 64; bi++)
 						{
 							short blockp = blockptr[bi];
-							if (blockptr == 0)
+							if (blockp == 0)
 								continue;
 							if (dropCounter < DropOutBitCount)
 							{
@@ -1226,7 +1226,13 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 			}
 			
 			string fileName = fileList.HidenFilePath;
-			string Suffix((char*)SuffixArry);
+			string Suffix = "";
+			for (int i = 0; i < SuffixArryCount; i++)
+			{
+				string s = "";
+				s += SuffixArry[i];
+				Suffix += s;
+			}
 			string outPath = fileName + Suffix;
 
 			BinaryFileSolver outSolver;
@@ -1329,7 +1335,7 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 							for (int bi = 0; bi < 64; bi++)
 							{
 								short blockp = blockptr[bi];
-								if (blockptr == 0)
+								if (blockp == 0)
 									continue;
 								if (dropCounter < BitDropOutNum)
 								{
@@ -1400,7 +1406,7 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 							for (int bi = 0; bi < 64; bi++)
 							{
 								short blockp = blockptr[bi];
-								if (blockptr == 0)
+								if (blockp == 0)
 									continue;
 								if (dropCounter < BitDropOutNum)
 								{
@@ -1467,7 +1473,7 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 							for (int bi = 0; bi < 64; bi++)
 							{
 								short blockp = blockptr[bi];
-								if (blockptr == 0)
+								if (blockp == 0)
 									continue;
 								if (dropCounter < BitDropOutNum)
 								{
@@ -1528,7 +1534,7 @@ void LSBLossyImplantAlg::ExecuteExtractingAlg()
 							for (int bi = 0; bi < 64; bi++)
 							{
 								short blockp = blockptr[bi];
-								if (blockptr == 0)
+								if (blockp == 0)
 									continue;
 								if (dropCounter < DropOutBitCount)
 								{
@@ -1708,7 +1714,7 @@ int LSBLossyImplantAlg::CalPayLoad(string filePath)
 				for (int bi = 0; bi < 64; bi++)
 				{
 					short blockp = blockptr[bi];
-					if (blockptr == 0)
+					if (blockp == 0)
 						continue;
 					HideCounter++;
 				}

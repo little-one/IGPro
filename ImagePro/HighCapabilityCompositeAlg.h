@@ -60,8 +60,18 @@ protected:
 	jvirt_barray_ptr* TableEmbed(jvirt_barray_ptr* coeff_arrays, jpeg_decompress_struct* cinfo);
 	int CalEffectiveBitsCount(FILE* file);		//自动去除头部8位算法描述位
 	int GetEffectiveBitsCount(string filePath);		//获取fileList中某载媒的可修改比特位总数
+
 	void ShowMessage(CString str);			//调试专用
+	void ShowMessage(vector<int> intList);
+	void ShowMessage(int num);
+	CString CharToCString(char* str, int length);
+	CString ShortToCString(short* str, int length);
+	CString UCharToCString(unsigned char* str, int length);
+
 	inline bool GetSecretBitGroup(char** SecretStream, int bitCount, const char const * fileStream, int fileBitCount, int position);
+	inline int SetSecretBitGroup(const char* const SecretStream, int bitCount, char * fileStream, int fileBitCount, int position);
 	inline void GetZOStreamGroup(char** ZOStream, const JCOEFPTR const * SrcDataGroup, int PGroupPayload);
+	inline int MCoding(const char* const SecretStream, const char* const ZOStream, int K);		//获取需要修改的位的位置，(已经自动减一，直接用到数据下标即可，返回-1表示不需要修改任何位)
+	inline void MDeCoding(char** SecreStream, const char* const ZOStream, int K);
 };
 

@@ -4,8 +4,10 @@
 #include <ostream>
 #include <iostream>
 #include <map>
+#include "MainFrm.h"
 #include <stdint.h>
 
+#include <vector>
 #ifndef BITCOUNT
 #define BITCOUNT
 #define BITCOUNT_INT (8*sizeof(int))
@@ -36,6 +38,10 @@ public:
 	StreamConvert(int N);
 	~StreamConvert();
 public:
+	//调试专用
+	void ShowMessage(CString str);			
+	void ShowMessage(vector<int> intList);
+
 	void Convert_IntToBinaryStream(int num, char** BinaryStream);			
 	int Convert_BinaryStreamToInt(char* BStream);		//传入的BStream的大小必须是BITCOUNT_INT+1的
 

@@ -38,11 +38,16 @@ int StreamConvert::byteStreamToBinaryString(uint8_t byteBuf[], int byteLen, char
 			return -1;
 		char tmpStr[9] = "";
 		int byteBufIndex = 0;
+
+		//vector<int> test;
+		//test.push_back(charLen);
+		//ShowMessage(test);
+
 		for (int i = 0; i < charLen; i += 8)
 		{
 			strncpy_s(tmpStr, charBuf + i, 8);
 			for (int j = 0; j < 8; j++)
-				byteBuf[byteBufIndex] += tmpStr[j] - '0' << 7 - j;
+				byteBuf[byteBufIndex] += (tmpStr[j] - '0') << (7 - j);
 			++byteBufIndex;
 		}
 		break;
@@ -159,6 +164,26 @@ StreamConvert::StreamConvert()
 }
 StreamConvert::~StreamConvert()
 {
+}
+
+void StreamConvert::ShowMessage(CString str)
+{
+	CMainFrame* pMainfram = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+	MessageBox(pMainfram->GetSafeHwnd(), str, _T("123"), 1);
+}
+
+void StreamConvert::ShowMessage(vector<int> intList)
+{
+	CMainFrame* pMainfram = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+	CString finalstr;
+	for (auto i = intList.begin(); i != intList.end(); i++)
+	{
+		CString str;
+		str.Format(_T("%d"), *i);
+		finalstr += str;
+		finalstr += _T(" ");
+	}
+	MessageBox(pMainfram->GetSafeHwnd(), finalstr, _T("123"), 1);
 }
 
 StreamConvert::StreamConvert(int N)
