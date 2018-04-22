@@ -698,7 +698,53 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 		//T算法嵌入
 		bool TbreakFlg = false;
 		{
+			bool strideFlg = false;
 
+			int dropCounter = 0;
+			int dropBit = ALGHEAD_TYPE_LENGTH + COMPOSITE_BLOCK_NUM
+				+ COMPOSITE_BLOCK_COUNTE + COMPOSITE_MATRIX_K + COMPOSITE_MATRIX_STRIDE
+				+ COMPOSITE_MATRIX_CONTENT + COMPOSITE_TABLE_K + COMPOSITE_TABLE_STRIDE
+				+ COMPOSITE_TABLE_CONTENT + COMPOSITE_TABLE_LOSE_R;
+
+			for (int ci = 0; ci < 3; ci++)
+			{
+				JBLOCKARRAY buffer;
+				JCOEFPTR blockptr;
+				jpeg_component_info* compptr;
+				compptr = cinfo.comp_info + ci;
+				for (int by = 0; by < compptr->height_in_blocks; by++)
+				{
+					buffer = (cinfo.mem->access_virt_barray)((j_common_ptr)&cinfo, coeff_arrays[ci], 0, (JDIMENSION)1, FALSE);
+					for (int bx = 0; bx < compptr->width_in_blocks; bx++)
+					{
+						blockptr = buffer[by][bx];
+						for (int bi = 0; bi < 64; bi++)
+						{
+							short blockp = blockptr[bi];
+							if (blockp == 0)
+								continue;
+							//跳头
+							if (dropCounter < dropBit)
+							{
+								dropCounter++;
+								continue;
+							}
+							else        //进入数据区
+							{
+								
+							}
+							if (breakFlg)
+								break;
+						}
+						if (breakFlg)
+							break;
+					}
+					if (breakFlg)
+						break;
+				}
+				if (breakFlg)
+					break;
+			}
 		}
 		fclose(file);
 		FILE* outFile;
