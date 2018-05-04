@@ -317,3 +317,18 @@ int StreamConvert::Convert_KStreamToInt(const char * BStream, int K)
 	return num;
 }
 
+void StreamConvert::Convert_IntToKStream(int num, int K, char ** BStream)
+{
+	*BStream = new char[K + 1];
+	(*BStream)[K] = '\0';
+	int counter = 0;
+	for (int i = K - 1; i >= 0; i--)
+	{
+		if (num >> i & 0x1)
+			(*BStream)[counter++] = '1';
+		else
+			(*BStream)[counter++] = '0';
+	}
+}
+
+

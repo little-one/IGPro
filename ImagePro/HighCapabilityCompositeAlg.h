@@ -25,9 +25,10 @@
 #define COMPOSITE_TABLE_K 4		//量化表嵌入K值
 #define COMPOSITE_TABLE_STRIDE 8		//量化表嵌入步长
 #define COMPOSITE_TABLE_CONTENT 32		//量化表嵌入密文位数
-#define COMPOSITE_TABLE_LOSE_R (4*12)		//量化表损失值记录
+#define COMPOSITE_TABLE_LOSE_R (4*12*2)		//量化表损失值记录	每个r占4字节，每个通道有12个r，有2个通道
 #endif // !COMPOSITE_ALG_HEAD
 
+//#define MAXMEMORYLIMIT 100000000
 
 class HighCapabilityCompositeAlg :
 	public virtual IJpegOpeAlg

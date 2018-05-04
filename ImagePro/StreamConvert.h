@@ -53,5 +53,6 @@ public:
 
 	int Convert_CharToInt(char cnum);		//
 	int Convert_KStreamToInt(const char* BStream, int K);		//将K位比特流转为int，K必须小于BStream数组的长度
+	void Convert_IntToKStream(int num, int K, char** BStream);		//将int转为长度为K的字符串流，存在截断问题，因此使用时必须严格控制长度
 };
 
