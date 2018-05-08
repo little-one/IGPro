@@ -54,6 +54,7 @@ BEGIN_MESSAGE_MAP(CImageProView, CFormView)
 	ON_BN_CLICKED(IDC_BUTTON5, &CImageProView::OnBnClickedButton5)*/
 	ON_BN_CLICKED(IDC_BUTTON1, &CImageProView::OnBnClickedButton1)
 	ON_BN_CLICKED(IDC_BUTTON2, &CImageProView::OnBnClickedButton2)
+	ON_BN_CLICKED(IDC_BUTTON3, &CImageProView::OnBnClickedButton3)
 END_MESSAGE_MAP()
 
 struct my_error_mgr {
@@ -148,4 +149,10 @@ void CImageProView::OnBnClickedButton2()
 	IJpegOpeAlg* JpegOpeAlg = new HighCapabilityCompositeAlg(&flist, 3, 2);
 	//IJpegOpeAlg* JpegOpeAlg = new LSBLossyImplantAlg(&flist);
 	JpegOpeAlg->ExecuteExtractingAlg();
+}
+
+
+void CImageProView::OnBnClickedButton3()
+{
+	// TODO: 在此添加控件通知处理程序代码
 }

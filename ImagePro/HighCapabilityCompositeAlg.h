@@ -29,6 +29,8 @@
 #endif // !COMPOSITE_ALG_HEAD
 
 //#define MAXMEMORYLIMIT 100000000
+#define R_STARTPOSITION 3
+#define R_ENDPOSITION 15
 
 class HighCapabilityCompositeAlg :
 	public virtual IJpegOpeAlg
@@ -39,6 +41,7 @@ private:
 	short TableK;
 	short Table_NBit;
 	short Table_DBit;
+
 public:
 	virtual void InitDecompressInfo(jpeg_decompress_struct* cinfo);	//只创建decompress结构体并绑定错误处理器，需要手动绑定文件源
 	virtual void InitCompressInfo(jpeg_compress_struct* cinfo);
@@ -48,7 +51,7 @@ public:
 	HighCapabilityCompositeAlg();
 	HighCapabilityCompositeAlg(FileList* fileList, int MatrixK, int TableK);
 	~HighCapabilityCompositeAlg();
-
+	void test();
 	virtual void ExecuteEmbedingAlg();
 	virtual void ExecuteExtractingAlg();
 	virtual int CalPayLoad(string filePath);
@@ -65,6 +68,10 @@ protected:
 	void ShowMessage(CString str);			//调试专用
 	void ShowMessage(vector<int> intList);
 	void ShowMessage(int num);
+	void ShowMessage(char ch);
+	void ShowMessage(const char* charry, int count);
+	void ShowMessage(double num);
+
 	CString CharToCString(char* str, int length);
 	CString ShortToCString(short* str, int length);
 	CString UCharToCString(unsigned char* str, int length);

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "HighCapabilityCompositeAlg.h"
 #include "MainFrm.h"
+#include <fstream>
 #include <math.h>
 
 void HighCapabilityCompositeAlg::InitDecompressInfo(jpeg_decompress_struct * cinfo)
@@ -67,6 +68,10 @@ HighCapabilityCompositeAlg::HighCapabilityCompositeAlg(FileList * fileList, int 
 }
 
 HighCapabilityCompositeAlg::~HighCapabilityCompositeAlg()
+{
+}
+
+void HighCapabilityCompositeAlg::test()
 {
 }
 
@@ -162,14 +167,15 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 
 		int MPayLoad = 0;
 		int TPayLoad = 0;
+		
 		//计算载体两部分的载荷
 		{
 			MPayLoad = MatrixCalPayLoad(fileList.CarrierImagePathList[0], MatrixK);
-			TPayLoad = floor((double)TEffiBitCount / Table_NBit)*Table_DBit;
+			double tt = (double)TEffiBitCount / Table_NBit;
+			double ft = floor(tt);
+			TPayLoad = ft*Table_DBit / 3;
 		}
-		//ShowMessage(fileBitCount);
-		//ShowMessage(MPayLoad);
-		//ShowMessage(TPayLoad);
+
 		int MBit = 0;
 		int TBit = 0;
 		//计算各自承担的密文比特数，自动缩放为8的倍数
@@ -197,7 +203,11 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 			int effiBitPerGroup = floor((double)TEffiBitCount / GroupNum);
 			TStride = effiBitPerGroup - Table_NBit;
 		}
-		//ShowMessage(MStride);
+		//ShowMessage(TStride);
+		/*ShowMessage(BCount);
+		ShowMessage(TEffiBitCount);
+		ShowMessage(MStride);
+		ShowMessage(TStride);*/
 		/*
 		CString str_BCount;
 		CString str_TEffiBitCount;
@@ -253,14 +263,14 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 		{
 			JQUANT_TBL* qTbl = cinfo.quant_tbl_ptrs[0];
 			int offset = 0;
-			for (int j = 1; j < 13; j++)
+			for (int j = R_STARTPOSITION; j < R_ENDPOSITION; j++)
 			{
 				Y_Tr[offset] = qTbl->quantval[j] - this->TableK * floor((double)(qTbl->quantval[j]) / (this->TableK));
 				offset++;
 			}
 			qTbl = cinfo.quant_tbl_ptrs[1];
 			offset = 0;
-			for (int j = 1; j < 13; j++)
+			for (int j = R_STARTPOSITION; j < R_ENDPOSITION; j++)
 			{
 				C_Tr[offset] = qTbl->quantval[j] - this->TableK * floor((double)(qTbl->quantval[j]) / (this->TableK));
 				offset++;
@@ -652,6 +662,8 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 
 		}
 
+		//vector<int> MTestArray;
+		//int MTestCounter = 0;
 		//M算法嵌入
 		bool breakFlg = false;		//结束标识
 		{
@@ -723,11 +735,11 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 										//处理该组密文
 										{
 											GetZOStreamGroup(&ZOSrcBitGroup, SrcDataGroup, PGroupBitCount_PayLoad);		//先将载体处理为01序列
-																						
-											//矩阵编码
+
+																														//矩阵编码
 											int position = MCoding(SecretBitGroup, ZOSrcBitGroup, this->MatrixK);
-											
-											
+
+
 											if (position > -1)		//=-1时不需要修改，否则修改相应的位置
 											{
 												if (ZOSrcBitGroup[position] == '1')		//说明该位是正奇位
@@ -756,7 +768,7 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 								}
 								else           //嵌入一个密文分组之后，跳过stride个步长
 								{
-									if (StrideCounter >= MStride-1)
+									if (StrideCounter >= MStride - 1)
 									{
 										strideFlg = false;
 										StrideCounter = 0;
@@ -779,30 +791,175 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 				if (breakFlg)
 					break;
 			}
+			//ShowMessage(HideCounter);
 			//ShowMessage(MBit);
-			//ShowMessage(HideBitFinalTest);
-			//ShowMessage(TotalKexiugaiweiTest);
 		}
+
+		//ofstream out("F:\\test\\before.txt");
+		//for (int i = 0; i < MBit; i++)
+		//	out << FinalBinaryStream[i];
+		//out.close();
+
+		//CString str = _T("");
+		//for (int i = 0; i < 32; i++)
+		//{
+		//	CString ch;
+		//	CString counter;
+		//	counter.Format(_T("%d"), MBit + i);
+		//	ch.Format(_T("%c"), FinalBinaryStream[MBit + i]);
+		//	str += counter;
+		//	str += _T(": ");
+		//	str += ch;
+		//	str += _T(" ");
+		//}
+		//ShowMessage(str);
+		//调试代码
+		
+		//vector<int> M_Testarray;
+		//vector<int> M_Testarray_bx;
+		//vector<int> M_Testarray_by;
+		//vector<int> M_Testarray_ci;
+		//vector<int> M_Testarray_bi;
+		//int counter = 0;
+		//bool flag = false;
+		//{
+		//	bool breakFlg = false;
+		//	int dropCounter = 0;
+		//	int dropBit = ALGHEAD_TYPE_LENGTH + COMPOSITE_BLOCK_NUM
+		//		+ COMPOSITE_BLOCK_COUNTE + COMPOSITE_MATRIX_K + COMPOSITE_MATRIX_STRIDE
+		//		+ COMPOSITE_MATRIX_CONTENT + COMPOSITE_TABLE_K + COMPOSITE_TABLE_STRIDE
+		//		+ COMPOSITE_TABLE_CONTENT + COMPOSITE_TABLE_LOSE_R;
+		//	for (int ci = 0; ci < 3; ci++)
+		//	{
+		//		JBLOCKARRAY buffer;
+		//		JCOEFPTR blockptr;
+		//		jpeg_component_info* compptr;
+		//		compptr = cinfo.comp_info + ci;
+		//		for (int by = 0; by < compptr->height_in_blocks; by++)
+		//		{
+		//			buffer = (cinfo.mem->access_virt_barray)((j_common_ptr)&cinfo, coeff_arrays[ci], 0, (JDIMENSION)1, FALSE);
+		//			for (int bx = 0; bx < compptr->width_in_blocks; bx++)
+		//			{
+		//				blockptr = buffer[by][bx];
+		//				for (int bi = 0; bi < 64; bi++)
+		//				{
+		//					short blockp = blockptr[bi];
+		//					if (blockp == 0)
+		//						continue;
+		//					//TotalKexiugaiweiTest++;
+		//					//跳头
+		//					if (dropCounter < dropBit)
+		//					{
+		//						dropCounter++;
+		//						continue;
+		//					}
+		//					else        //进入数据区
+		//					{
+		//						if (by == 5 && bx == 105 && bi == 24)
+		//						{
+		//							flag = true;
+		//						}
+		//						if (flag)
+		//						{
+		//							M_Testarray_bi.push_back(bi);
+		//							M_Testarray_bx.push_back(bx);
+		//							M_Testarray_by.push_back(by);
+		//							M_Testarray_ci.push_back(ci);
+		//							M_Testarray.push_back(blockptr[bi]);
+		//							//ShowMessage(1);
+		//							if (counter >= 60)
+		//							{
+		//								breakFlg = true;
+		//								flag = false;
+		//							}
+		//							counter++;
+		//						}
+		//					}
+		//					if (breakFlg)
+		//						break;
+		//				}
+		//				if (breakFlg)
+		//					break;
+		//			}
+		//			if (breakFlg)
+		//				break;
+		//		}
+		//		if (breakFlg)
+		//			break;
+		//	}
+		//}
+		//for (int i = 0; i < 60; i++)
+		//{
+		//	CString str;
+		//	CString strci;
+		//	CString strbi;
+		//	CString strbx;
+		//	CString strby;
+		//	CString strnum;
+		//	strci.Format(_T("%d"), M_Testarray_ci[i]);
+		//	strbi.Format(_T("%d"), M_Testarray_bi[i]);
+		//	strbx.Format(_T("%d"), M_Testarray_bx[i]);
+		//	strby.Format(_T("%d"), M_Testarray_by[i]);
+		//	strnum.Format(_T("%d"), M_Testarray[i]);
+		//	str += _T("ci: ");
+		//	str += strci;
+		//	str += _T(" by: ");
+		//	str += strby;
+		//	str += _T(" bx: ");
+		//	str += strbx;
+		//	str += _T(" bi: ");
+		//	str += strbi;
+		//	str += _T(" num: ");
+		//	str += strnum;
+		//	str += _T("\r\n");
+		//	ShowMessage(str);
+		//}
+		
 
 		//T算法嵌入
 		bool TbreakFlg = false;
 		{
+			int Cbl[2][64];
+			{
+				JQUANT_TBL* qTbl = cinfo.quant_tbl_ptrs[0];
+				for (int i = 0; i < 64; i++)
+				{
+					Cbl[0][i] = qTbl->quantval[i];
+				}
+				qTbl = cinfo.quant_tbl_ptrs[1];
+				for (int i = 0; i < 64; i++)
+				{
+					Cbl[1][i] = qTbl->quantval[i];
+				}
+			}
+			int Tbl[2][64];
+			{
+				JQUANT_TBL* qTbl = cinfo.quant_tbl_ptrs[0];
+				for (int i = 0; i < 64; i++)
+				{
+					Tbl[0][i] = qTbl->quantval[i];
+				}
+				for (int j = R_STARTPOSITION; j < R_ENDPOSITION; j++)
+				{
+					Tbl[0][j] = floor((double)(qTbl->quantval[j]) / this->TableK);
+				}
+				qTbl = cinfo.quant_tbl_ptrs[1];
+				for (int i = 0; i < 64; i++)
+				{
+					Tbl[1][i] = qTbl->quantval[i];
+				}
+				for (int j = R_STARTPOSITION; j < R_ENDPOSITION; j++)
+				{
+					Tbl[1][j] = floor((double)(qTbl->quantval[j]) / this->TableK);
+				}
+			}
+
 			bool strideFlg = false;
 
-			//修改量化表
-			//{
-			//	JQUANT_TBL* qTbl = coutfo.quant_tbl_ptrs[0];
-			//	for (int j = 1; j < 13; j++)
-			//	{
-			//		qTbl->quantval[j] = floor((double)(qTbl->quantval[j]) / this->TableK);
-			//	}
-			//	qTbl = cinfo.quant_tbl_ptrs[1];
-			//	for (int j = 1; j < 13; j++)
-			//	{
-			//		qTbl->quantval[j] = floor((double)(qTbl->quantval[j]) / this->TableK);
-			//	}
-			//}
-
+			//int blockCounter = 0;		//块内计数器，记录当前访问到块内的位置，63之后置零
+			int FileStreamCounter = MBit;			//记录T算法加密的bit数
+			//int FilePositionCounter = MBit;		//密文计数器，从M算法的末尾开始继续加密
+			int strideCounter = 0;		//跳步计数器
 			int dropCounter = 0;
 			int dropBit = ALGHEAD_TYPE_LENGTH + COMPOSITE_BLOCK_NUM
 				+ COMPOSITE_BLOCK_COUNTE + COMPOSITE_MATRIX_K + COMPOSITE_MATRIX_STRIDE
@@ -826,6 +983,7 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 							short blockp = blockptr[bi];
 							if (blockp == 0)
 								continue;
+							//ShowMessage(dropBit);
 							//跳头
 							if (dropCounter < dropBit)
 							{
@@ -834,18 +992,111 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 							}
 							else        //进入数据区
 							{
-								
+
+								//ShowMessage(TStride);
+								if (bi >= R_STARTPOSITION && bi < R_ENDPOSITION)		
+								{
+									int loss = 0;
+									int oTbl = 0;
+									//int oldQ = 0;
+									if (ci == 0)
+									{
+										loss = Y_Tr[bi - R_STARTPOSITION];
+										oTbl = Tbl[0][bi];
+										//oldQ = Cbl[0][bi];
+									}
+									else
+									{
+										loss = C_Tr[bi - R_STARTPOSITION];
+										oTbl = Tbl[1][bi];
+										//oldQ = Cbl[1][bi];
+									}
+									double lb = (double)loss*blockptr[bi];
+									double to = (double)this->TableK*oTbl;
+									int suffex = this->TableK * round(lb / to);
+									//blockptr[bi] = this->TableK * blockptr[bi];
+									blockptr[bi] = this->TableK * blockptr[bi] + suffex;
+
+								}
 							}
-							if (breakFlg)
+						}
+					}
+				}
+			}
+			
+			dropCounter = 0;
+			for (int ci = 0; ci < 3; ci++)
+			{
+				JBLOCKARRAY buffer;
+				JCOEFPTR blockptr;
+				jpeg_component_info* compptr;
+				compptr = cinfo.comp_info + ci;
+				for (int by = 0; by < compptr->height_in_blocks; by++)
+				{
+					buffer = (cinfo.mem->access_virt_barray)((j_common_ptr)&cinfo, coeff_arrays[ci], 0, (JDIMENSION)1, FALSE);
+					for (int bx = 0; bx < compptr->width_in_blocks; bx++)
+					{
+						blockptr = buffer[by][bx];
+						for (int bi = 0; bi < 64; bi++)
+						{
+							short blockp = blockptr[bi];
+							if (blockp == 0)
+								continue;
+							//ShowMessage(dropBit);
+							//跳头
+							if (dropCounter < dropBit)
+							{
+								dropCounter++;
+								continue;
+							}
+							else        //进入数据区
+							{
+								if (bi >= R_STARTPOSITION && bi < R_ENDPOSITION)
+								{
+									if (!strideFlg)
+									{
+										char fC = FinalBinaryStream[FileStreamCounter];
+										if (fC == '1')		//为0时不采取任何操作
+										{
+											if (blockptr[bi] >0)
+												blockptr[bi] = blockptr[bi] + 1;
+											else
+												blockptr[bi] = blockptr[bi] - 1;
+										}
+
+										FileStreamCounter++;
+										strideFlg = true;
+
+										if (FileStreamCounter >= MBit + TBit)
+										{
+											TbreakFlg = true;
+										}
+									}
+									else      //跳步
+									{
+										if (strideCounter >= TStride - 1)
+										{
+											strideFlg = false;
+											strideCounter = 0;
+										}
+										else
+										{
+											strideCounter++;
+										}
+									}
+									//FileStreamCounter++;
+								}
+							}
+							if (TbreakFlg)
 								break;
 						}
-						if (breakFlg)
+						if (TbreakFlg)
 							break;
 					}
-					if (breakFlg)
+					if (TbreakFlg)
 						break;
 				}
-				if (breakFlg)
+				if (TbreakFlg)
 					break;
 			}
 		}
@@ -873,12 +1124,12 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 		//修改量化表
 		{
 			JQUANT_TBL* qTbl = coutfo.quant_tbl_ptrs[0];
-			for (int j = 1; j < 13; j++)
+			for (int j = R_STARTPOSITION; j < R_ENDPOSITION; j++)
 			{
 				qTbl->quantval[j] = floor((double)(qTbl->quantval[j]) / this->TableK);
 			}
 			qTbl = cinfo.quant_tbl_ptrs[1];
-			for (int j = 1; j < 13; j++)
+			for (int j = R_STARTPOSITION; j < R_ENDPOSITION; j++)
 			{
 				qTbl->quantval[j] = floor((double)(qTbl->quantval[j]) / this->TableK);
 			}
@@ -891,6 +1142,7 @@ void HighCapabilityCompositeAlg::ExecuteEmbedingAlg()
 		jpeg_destroy_decompress(&cinfo);
 
 		fclose(outFile);
+		
 	}
 	else if (fileList.CarrierImagePathList.size() == 0)
 	{
@@ -1231,6 +1483,393 @@ void HighCapabilityCompositeAlg::ExecuteExtractingAlg()
 			delete[] Stream_Tr;
 		}
 
+		//读取T算法数据
+		char* TBinaryStream = new char[TEmbMessBitCount];
+		bool TbreakFlg = false;
+		{
+			int Table_K = (int)Tk;
+			int Table_Stride = (int)Ts;
+
+			int Tbl[2][64];				//Q'
+			{
+				JQUANT_TBL* qTbl = cinfo.quant_tbl_ptrs[0];
+				for (int i = 0; i < 64; i++)
+				{
+					Tbl[0][i] = qTbl->quantval[i];
+				}
+				qTbl = cinfo.quant_tbl_ptrs[1];
+				for (int i = 0; i < 64; i++)
+				{
+					Tbl[1][i] = qTbl->quantval[i];
+				}
+			}
+			int Cbl[2][64];		//Q
+			{
+				JQUANT_TBL* qTbl = cinfo.quant_tbl_ptrs[0];
+				for (int i = 0; i < 64; i++)
+				{
+					Cbl[0][i] = qTbl->quantval[i];
+				}
+				for (int j = R_STARTPOSITION; j < R_ENDPOSITION; j++)
+				{
+					Cbl[0][j] = Cbl[0][j] * Table_K;
+				}
+				qTbl = cinfo.quant_tbl_ptrs[1];
+				for (int i = 0; i < 64; i++)
+				{
+					Cbl[1][i] = qTbl->quantval[i];
+				}
+				for (int j = R_STARTPOSITION; j < R_ENDPOSITION; j++)
+				{
+					Cbl[1][j] = Cbl[1][j] * Table_K;
+				}
+			}
+
+			bool strideFlg = false;
+
+			int FileStreamCounter = 0;
+			//int FilePositionCounter = MEmbMessBitCount;		//密文计数器，从M算法的末尾开始继续加密
+			int strideCounter = 0;		//跳步计数器
+			int dropCounter = 0;
+			int dropBit = ALGHEAD_TYPE_LENGTH + COMPOSITE_BLOCK_NUM
+				+ COMPOSITE_BLOCK_COUNTE + COMPOSITE_MATRIX_K + COMPOSITE_MATRIX_STRIDE
+				+ COMPOSITE_MATRIX_CONTENT + COMPOSITE_TABLE_K + COMPOSITE_TABLE_STRIDE
+				+ COMPOSITE_TABLE_CONTENT + COMPOSITE_TABLE_LOSE_R;
+
+			//vector<int> testarray;
+			//int testcounter = 0;
+
+
+			//密文抽取
+			for (int ci = 0; ci < 3; ci++)
+			{
+				JBLOCKARRAY buffer;
+				JCOEFPTR blockptr;
+				jpeg_component_info* compptr;
+				compptr = cinfo.comp_info + ci;
+				for (int by = 0; by < compptr->height_in_blocks; by++)
+				{
+					buffer = (cinfo.mem->access_virt_barray)((j_common_ptr)&cinfo, coeff_arrays[ci], 0, (JDIMENSION)1, FALSE);
+					for (int bx = 0; bx < compptr->width_in_blocks; bx++)
+					{
+						blockptr = buffer[by][bx];
+						for (int bi = 0; bi < 64; bi++)
+						{
+							short blockp = blockptr[bi];
+							if (blockp == 0)
+								continue;
+							//ShowMessage(dropBit);
+							//跳头
+							if (dropCounter < dropBit)
+							{
+								dropCounter++;
+								continue;
+							}
+							else        //进入数据区
+							{
+
+								if (bi >= R_STARTPOSITION && bi < R_ENDPOSITION)
+								{
+									if (!strideFlg)
+									{
+										int tC = blockptr[bi] % Table_K;
+										if (tC == -1)
+										{
+											TBinaryStream[FileStreamCounter] = '1';
+											blockptr[bi] = blockptr[bi] + 1;
+										}
+										else if (tC == 1)
+										{
+											TBinaryStream[FileStreamCounter] = '1';
+											blockptr[bi] = blockptr[bi] - 1;
+										}
+										else
+										{
+											TBinaryStream[FileStreamCounter] = '0';
+										}
+
+										FileStreamCounter++;
+										strideFlg = true;
+										if (FileStreamCounter >= TEmbMessBitCount)
+										{
+											TbreakFlg = true;
+										}
+									}
+									else      //跳步
+									{
+										if (strideCounter >= Table_Stride - 1)
+										{
+											strideFlg = false;
+											strideCounter = 0;
+										}
+										else
+										{
+											strideCounter++;
+										}
+									}
+								}
+							}
+							if (TbreakFlg)
+								break;
+						}
+						if (TbreakFlg)
+							break;
+					}
+					if (TbreakFlg)
+						break;
+				}
+				if (TbreakFlg)
+					break;
+			}
+
+			dropCounter = 0;
+			for (int ci = 0; ci < 3; ci++)
+			{
+				JBLOCKARRAY buffer;
+				JCOEFPTR blockptr;
+				jpeg_component_info* compptr;
+				compptr = cinfo.comp_info + ci;
+				for (int by = 0; by < compptr->height_in_blocks; by++)
+				{
+					buffer = (cinfo.mem->access_virt_barray)((j_common_ptr)&cinfo, coeff_arrays[ci], 0, (JDIMENSION)1, FALSE);
+					for (int bx = 0; bx < compptr->width_in_blocks; bx++)
+					{
+						blockptr = buffer[by][bx];
+						for (int bi = 0; bi < 64; bi++)
+						{
+							short blockp = blockptr[bi];
+							if (blockp == 0)
+								continue;
+							//ShowMessage(dropBit);
+							//跳头
+							if (dropCounter < dropBit)
+							{
+								dropCounter++;
+								continue;
+							}
+							else        //进入数据区
+							{
+								if (bi >= R_STARTPOSITION && bi < R_ENDPOSITION)
+								{
+									int loss = 0;
+									int oTbl = 0;
+									//int oldQ = 0;
+									if (ci == 0)
+									{
+										loss = Y_Tr[bi - R_STARTPOSITION];
+										oTbl = Tbl[0][bi];
+										//oldQ = Cbl[0][bi];
+									}
+									else
+									{
+										loss = C_Tr[bi - R_STARTPOSITION];
+										oTbl = Tbl[1][bi];
+										//oldQ = Cbl[1][bi];
+									}
+									double rq = (double)loss / oTbl;
+									double krq = Table_K + rq;
+									double dkrq = (double)(blockptr[bi]) / krq;
+									blockptr[bi] = round(dkrq);
+
+								}
+							}
+						}
+					}
+				}
+			}
+
+			//vector<int> M_Testarray;
+			//vector<int> M_Testarray_bx;
+			//vector<int> M_Testarray_by;
+			//vector<int> M_Testarray_ci;
+			//vector<int> M_Testarray_bi;
+			//int counter = 0;
+			//bool flag = false;
+			//{
+			//	bool breakFlg = false;
+			//	int dropCounter = 0;
+			//	int dropBit = ALGHEAD_TYPE_LENGTH + COMPOSITE_BLOCK_NUM
+			//		+ COMPOSITE_BLOCK_COUNTE + COMPOSITE_MATRIX_K + COMPOSITE_MATRIX_STRIDE
+			//		+ COMPOSITE_MATRIX_CONTENT + COMPOSITE_TABLE_K + COMPOSITE_TABLE_STRIDE
+			//		+ COMPOSITE_TABLE_CONTENT + COMPOSITE_TABLE_LOSE_R;
+			//	for (int ci = 0; ci < 3; ci++)
+			//	{
+			//		JBLOCKARRAY buffer;
+			//		JCOEFPTR blockptr;
+			//		jpeg_component_info* compptr;
+			//		compptr = cinfo.comp_info + ci;
+			//		for (int by = 0; by < compptr->height_in_blocks; by++)
+			//		{
+			//			buffer = (cinfo.mem->access_virt_barray)((j_common_ptr)&cinfo, coeff_arrays[ci], 0, (JDIMENSION)1, FALSE);
+			//			for (int bx = 0; bx < compptr->width_in_blocks; bx++)
+			//			{
+			//				blockptr = buffer[by][bx];
+			//				for (int bi = 0; bi < 64; bi++)
+			//				{
+			//					short blockp = blockptr[bi];
+			//					if (blockp == 0)
+			//						continue;
+			//					//TotalKexiugaiweiTest++;
+			//					//跳头
+			//					if (dropCounter < dropBit)
+			//					{
+			//						dropCounter++;
+			//						continue;
+			//					}
+			//					else        //进入数据区
+			//					{
+			//						if (by == 5 && bx == 105 && bi == 24)
+			//						{
+			//							flag = true;
+			//						}
+			//						if (flag)
+			//						{
+			//							M_Testarray_bi.push_back(bi);
+			//							M_Testarray_bx.push_back(bx);
+			//							M_Testarray_by.push_back(by);
+			//							M_Testarray_ci.push_back(ci);
+			//							M_Testarray.push_back(blockptr[bi]);
+			//							//ShowMessage(1);
+			//							if (counter >= 60)
+			//							{
+			//								breakFlg = true;
+			//								flag = false;
+			//							}
+			//							counter++;
+			//						}
+			//					}
+			//					if (breakFlg)
+			//						break;
+			//				}
+			//				if (breakFlg)
+			//					break;
+			//			}
+			//			if (breakFlg)
+			//				break;
+			//		}
+			//		if (breakFlg)
+			//			break;
+			//	}
+			//}
+			//for (int i = 0; i < 60; i++)
+			//{
+			//	CString str;
+			//	CString strci;
+			//	CString strbi;
+			//	CString strbx;
+			//	CString strby;
+			//	CString strnum;
+			//	strci.Format(_T("%d"), M_Testarray_ci[i]);
+			//	strbi.Format(_T("%d"), M_Testarray_bi[i]);
+			//	strbx.Format(_T("%d"), M_Testarray_bx[i]);
+			//	strby.Format(_T("%d"), M_Testarray_by[i]);
+			//	strnum.Format(_T("%d"), M_Testarray[i]);
+			//	str += _T("ci: ");
+			//	str += strci;
+			//	str += _T(" by: ");
+			//	str += strby;
+			//	str += _T(" bx: ");
+			//	str += strbx;
+			//	str += _T(" bi: ");
+			//	str += strbi;
+			//	str += _T(" num: ");
+			//	str += strnum;
+			//	str += _T("\r\n");
+			//	ShowMessage(str);
+			//}
+
+		}
+		//纯调试
+		/*
+		vector<int> M_Testarray;
+		vector<int> M_Testarray_bx;
+		vector<int> M_Testarray_by;
+		vector<int> M_Testarray_ci;
+		vector<int> M_Testarray_bi;
+		{
+			bool breakFlg = false;
+			int dropCounter = 0;
+			int dropBit = ALGHEAD_TYPE_LENGTH + COMPOSITE_BLOCK_NUM
+				+ COMPOSITE_BLOCK_COUNTE + COMPOSITE_MATRIX_K + COMPOSITE_MATRIX_STRIDE
+				+ COMPOSITE_MATRIX_CONTENT + COMPOSITE_TABLE_K + COMPOSITE_TABLE_STRIDE
+				+ COMPOSITE_TABLE_CONTENT + COMPOSITE_TABLE_LOSE_R;
+			for (int ci = 0; ci < 3; ci++)
+			{
+				JBLOCKARRAY buffer;
+				JCOEFPTR blockptr;
+				jpeg_component_info* compptr;
+				compptr = cinfo.comp_info + ci;
+				for (int by = 0; by < compptr->height_in_blocks; by++)
+				{
+					buffer = (cinfo.mem->access_virt_barray)((j_common_ptr)&cinfo, coeff_arrays[ci], 0, (JDIMENSION)1, FALSE);
+					for (int bx = 0; bx < compptr->width_in_blocks; bx++)
+					{
+						blockptr = buffer[by][bx];
+						for (int bi = 0; bi < 64; bi++)
+						{
+							short blockp = blockptr[bi];
+							if (blockp == 0)
+								continue;
+							//TotalKexiugaiweiTest++;
+							//跳头
+							if (dropCounter < dropBit)
+							{
+								dropCounter++;
+								continue;
+							}
+							else        //进入数据区
+							{
+								if (bi >= R_STARTPOSITION&&bi < R_ENDPOSITION)
+								{
+									M_Testarray_bi.push_back(bi);
+									M_Testarray_bx.push_back(bx);
+									M_Testarray_by.push_back(by);
+									M_Testarray_ci.push_back(ci);
+									M_Testarray.push_back(blockptr[bi]);
+									if (bi == R_ENDPOSITION - 1)
+										breakFlg = true;
+								}
+							}
+							if (breakFlg)
+								break;
+						}
+						if (breakFlg)
+							break;
+					}
+					if (breakFlg)
+						break;
+				}
+				if (breakFlg)
+					break;
+			}
+		}
+		for (int i = 0; i < 20; i++)
+		{
+			CString str;
+			CString strci;
+			CString strbi;
+			CString strbx;
+			CString strby;
+			CString strnum;
+			strci.Format(_T("%d"), M_Testarray_ci[i]);
+			strbi.Format(_T("%d"), M_Testarray_bi[i]);
+			strbx.Format(_T("%d"), M_Testarray_bx[i]);
+			strby.Format(_T("%d"), M_Testarray_by[i]);
+			strnum.Format(_T("%d"), M_Testarray[i]);
+			str += _T("ci: ");
+			str += strci;
+			str += _T(" by: ");
+			str += strby;
+			str += _T(" bx: ");
+			str += strbx;
+			str += _T(" bi: ");
+			str += strbi;
+			str += _T(" num: ");
+			str += strnum;
+			ShowMessage(str);
+		}
+		*/
+
 		//读取M算法数据
 		char* MBinaryStream = new char[MEmbMessBitCount];
 		bool breakFlg = false;		//结束标识
@@ -1280,6 +1919,7 @@ void HighCapabilityCompositeAlg::ExecuteExtractingAlg()
 							}
 							else        //进入数据区
 							{
+
 								if (!strideFlg)
 								{
 									SrcDataGroup[GroupCounter] = &(blockptr[bi]);	//进行组采集
@@ -1309,7 +1949,7 @@ void HighCapabilityCompositeAlg::ExecuteExtractingAlg()
 								}
 								else
 								{
-									if (StrideCounter >= ms)
+									if (StrideCounter >= ms - 1)
 									{
 										strideFlg = false;
 										StrideCounter = 0;
@@ -1336,19 +1976,26 @@ void HighCapabilityCompositeAlg::ExecuteExtractingAlg()
 
 		}
 		fclose(file);
-		//ShowMessage(TEmbMessBitCount);
-		char* TBinaryStream = new char[TEmbMessBitCount];
-		for (int i = 0; i < TEmbMessBitCount; i++)
-		{
-			TBinaryStream[i] = '0';
-		}
-
+		//CString str = _T("");
+		//for (int i = 0; i < 32; i++)
+		//{
+		//	CString ch;
+		//	ch.Format(_T("%c"), TBinaryStream[i]);
+		//	str += ch;
+		//}
+		//ShowMessage(str);
+		//ShowMessage(MBinaryStream, 32);
+		//ofstream out("F:\\test\\after.txt");
+		//for (int i = 0; i < MEmbMessBitCount; i++)
+		//	out << MBinaryStream[i];
+		//out.close();
 		int BinaryBitCount = MEmbMessBitCount + TEmbMessBitCount;
 		char* BinaryStream = new char[MEmbMessBitCount + TEmbMessBitCount];
 		for (int i = 0; i < MEmbMessBitCount; i++)
 		{
 			BinaryStream[i] = MBinaryStream[i];
 		}
+
 		for (int i = 0; i < TEmbMessBitCount; i++)
 		{
 			BinaryStream[MEmbMessBitCount + i] = TBinaryStream[i];
@@ -1359,7 +2006,7 @@ void HighCapabilityCompositeAlg::ExecuteExtractingAlg()
 		{
 			StreamConvert sc;
 			uint8_t* BitArray = new uint8_t[BinaryBitCount / 8];
-
+			//ShowMessage(BinaryBitCount);
 			sc.byteStreamToBinaryString(BitArray, BinaryBitCount / 8, BinaryStream, BinaryBitCount, 1);
 			//ShowMessage(UCharToCString(BitArray, 16));
 			//拆分后缀和信息部分
@@ -1606,6 +2253,36 @@ void HighCapabilityCompositeAlg::ShowMessage(int num)
 	CMainFrame* pMainfram = (CMainFrame*)AfxGetApp()->m_pMainWnd;
 	CString str;
 	str.Format(_T("%d"), num);
+	MessageBox(pMainfram->GetSafeHwnd(), str, _T("123"), 1);
+}
+
+void HighCapabilityCompositeAlg::ShowMessage(char ch)
+{
+	CMainFrame* pMainfram = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+	CString str;
+	str.Format(_T("%c"), ch);
+	MessageBox(pMainfram->GetSafeHwnd(), str, _T("123"), 1);
+}
+
+void HighCapabilityCompositeAlg::ShowMessage(const char * charry, int count)
+{
+	CMainFrame* pMainfram = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+	CString str = _T("");
+	for (int i = 0; i < count; i++)
+	{
+		CString ch;
+		ch.Format(_T("%c"), charry[i]);
+		str = str + ch;
+		str = str + _T(" ");
+	}
+	MessageBox(pMainfram->GetSafeHwnd(), str, _T("123"), 1);
+}
+
+void HighCapabilityCompositeAlg::ShowMessage(double num)
+{
+	CMainFrame* pMainfram = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+	CString str;
+	str.Format(_T("%f"), num);
 	MessageBox(pMainfram->GetSafeHwnd(), str, _T("123"), 1);
 }
 
