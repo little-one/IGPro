@@ -126,10 +126,14 @@ void CImageProView::OnBnClickedButton1()
 	// TODO: 在此添加控件通知处理程序代码
 	//LSBLossyImplantAlg lsb;
 	FileList flist;
-	flist.CarrierImagePathList.push_back("F:\\test\\tt1.jpg");
+	flist.CarrierImagePathList.push_back("F:\\test\\multi1.jpg");
+	flist.CarrierImagePathList.push_back("F:\\test\\multi2.jpg");
+	flist.CarrierImagePathList.push_back("F:\\test\\multi3.jpg");
 	//flist.CarrierImagePathList.push_back("F:\\test\\tt1.jpg");
 	flist.HidenFilePath = "F:\\test\\seimg.jpg";
-	flist.NewFilePathList.push_back("F:\\test\\t2.jpg");
+	flist.NewFilePathList.push_back("F:\\test\\multi_result1.jpg");
+	flist.NewFilePathList.push_back("F:\\test\\multi_result2.jpg");
+	flist.NewFilePathList.push_back("F:\\test\\multi_result3.jpg");
 	//flist.NewFilePathList.push_back("F:\\test\\tt2.jpg");
 	IJpegOpeAlg* JpegOpeAlg = new HighCapabilityCompositeAlg(&flist, 3, 2);
 	//IJpegOpeAlg* JpegOpeAlg = new LSBLossyImplantAlg(&flist);
@@ -141,11 +145,15 @@ void CImageProView::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	FileList flist;
-	flist.CarrierImagePathList.push_back("F:\\test\\t2.jpg");
+	flist.CarrierImagePathList.push_back("F:\\test\\multi_result1.jpg");
+	flist.CarrierImagePathList.push_back("F:\\test\\multi_result2.jpg");
+	flist.CarrierImagePathList.push_back("F:\\test\\multi_result3.jpg");
 	//flist.CarrierImagePathList.push_back("F:\\test\\tt2.jpg");
 	flist.HidenFilePath = "F:\\test\\CpySeimg";
 	//flist.NewFilePathList.push_back("F:\\test\\t3.jpg");
-	flist.NewFilePathList.push_back("F:\\test\\t3.jpg");
+	flist.NewFilePathList.push_back("F:\\test\\multi_decode_result1.jpg");
+	flist.NewFilePathList.push_back("F:\\test\\multi_decode_result2.jpg");
+	flist.NewFilePathList.push_back("F:\\test\\multi_decode_result3.jpg");
 	IJpegOpeAlg* JpegOpeAlg = new HighCapabilityCompositeAlg(&flist, 3, 2);
 	//IJpegOpeAlg* JpegOpeAlg = new LSBLossyImplantAlg(&flist);
 	JpegOpeAlg->ExecuteExtractingAlg();
